@@ -1,0 +1,47 @@
+\hypertarget{structsloop__timer}{\section{sloop\-\_\-timer \-Struct \-Reference}
+\label{structsloop__timer}\index{sloop\-\_\-timer@{sloop\-\_\-timer}}
+}
+
+
+defines a timer.  
+
+
+
+
+{\ttfamily \#include $<$sloop.\-h$>$}
+
+\subsection*{\-Public \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structsloop__timer_a84d61072e846ed5798b6bdcd409f9f54}{int {\bfseries time\-\_\-w}}\label{structsloop__timer_a84d61072e846ed5798b6bdcd409f9f54}
+
+\item 
+\hypertarget{structsloop__timer_a04bbac44f72ee1dd224f545032140a40}{void $\ast$ {\bfseries user\-\_\-data}}\label{structsloop__timer_a04bbac44f72ee1dd224f545032140a40}
+
+\item 
+\hypertarget{structsloop__timer_a3beaf491849af0b9c2ea0f4e3a5d5ded}{sloop\-\_\-callback\-\_\-timer {\bfseries handler}}\label{structsloop__timer_a3beaf491849af0b9c2ea0f4e3a5d5ded}
+
+\item 
+\hypertarget{structsloop__timer_a0c8de0375a8fe05c4510149d9aeff8e2}{int {\bfseries stop}}\label{structsloop__timer_a0c8de0375a8fe05c4510149d9aeff8e2}
+
+\item 
+\hypertarget{structsloop__timer_ab9929ff8a87996a5aaa1c399c8e62c49}{int {\bfseries id}}\label{structsloop__timer_ab9929ff8a87996a5aaa1c399c8e62c49}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+defines a timer. 
+
+\-This timer is used to call a callbach functon in a specific time.
+\begin{DoxyItemize}
+\item time\-\_\-w is the time on which the callback is called.
+\item the callback handler which is called the this fd receives an event.
+\item the user data which will be included in the callback.
+\item the variable stop is used to stop the timer.
+\item the last variable is the id of the timer. 
+\end{DoxyItemize}
+
+\-The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{sloop_8h}{sloop.\-h}\end{DoxyCompactItemize}
