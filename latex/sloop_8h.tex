@@ -1,0 +1,350 @@
+\hypertarget{sloop_8h}{\section{sloop.\-h \-File \-Reference}
+\label{sloop_8h}\index{sloop.\-h@{sloop.\-h}}
+}
+
+
+\-Header for the sloop functions.  
+
+
+{\ttfamily \#include $<$math.\-h$>$}\*
+{\ttfamily \#include $<$sys/time.\-h$>$}\*
+{\ttfamily \#include $<$sys/select.\-h$>$}\*
+{\ttfamily \#include $<$stdlib.\-h$>$}\*
+{\ttfamily \#include $<$stdio.\-h$>$}\*
+\subsection*{\-Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structsloop}{sloop}
+\begin{DoxyCompactList}\small\item\em define a simple element of \-Sloop. \end{DoxyCompactList}\item 
+struct \hyperlink{structsloop__table}{sloop\-\_\-table}
+\begin{DoxyCompactList}\small\item\em define a table of \-Sloop. \end{DoxyCompactList}\item 
+struct \hyperlink{structsloop__timer}{sloop\-\_\-timer}
+\begin{DoxyCompactList}\small\item\em defines a timer. \end{DoxyCompactList}\item 
+struct \hyperlink{structsloop__table__timer}{sloop\-\_\-table\-\_\-timer}
+\begin{DoxyCompactList}\small\item\em define a table of \hyperlink{structsloop__timer}{sloop\-\_\-timer}. \end{DoxyCompactList}\item 
+struct \hyperlink{structsloop__data}{sloop\-\_\-data}
+\begin{DoxyCompactList}\small\item\em define data of sloop that will be used by the programmer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{sloop_8h_afa9d1f03181b59914f622d03bf25cfdb}{typedef void($\ast$ {\bfseries sloop\-\_\-callback\-\_\-handler} )(int fd, void $\ast$user\-\_\-data)}\label{sloop_8h_afa9d1f03181b59914f622d03bf25cfdb}
+
+\item 
+\hypertarget{sloop_8h_a7f0d2c7513dbcd88632e524d840ec16d}{typedef void($\ast$ {\bfseries sloop\-\_\-callback\-\_\-timer} )(void $\ast$user\-\_\-data)}\label{sloop_8h_a7f0d2c7513dbcd88632e524d840ec16d}
+
+\item 
+\hypertarget{sloop_8h_ac2aa15719d7a2ccf8ad1c399861b573f}{typedef struct \hyperlink{structsloop__data}{sloop\-\_\-data} {\bfseries sloop\-\_\-t}}\label{sloop_8h_ac2aa15719d7a2ccf8ad1c399861b573f}
+
+\item 
+\hypertarget{sloop_8h_a256ea1878d8e4b414041047d19086485}{typedef struct \hyperlink{structsloop__table__timer}{sloop\-\_\-table\-\_\-timer} {\bfseries sloop\-\_\-timer\-\_\-t}}\label{sloop_8h_a256ea1878d8e4b414041047d19086485}
+
+\end{DoxyCompactItemize}
+\subsection*{\-Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{sloop_8h_a8accbe952aada7a7e7c3a30607f7c15b}{sloop\-\_\-mode} \{ {\bfseries \-S\-L\-O\-O\-P\-\_\-\-R\-D}, 
+{\bfseries \-S\-L\-O\-O\-P\-\_\-\-W\-R}, 
+{\bfseries \-S\-L\-O\-O\-P\-\_\-\-E\-X\-C\-E\-P\-T}
+ \}
+\begin{DoxyCompactList}\small\item\em \-Define the type of sloop mode. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$ \hyperlink{sloop_8h_a4a893acd7b6cc20f062adceecc52a7eb}{sloop\-\_\-new} ()
+\begin{DoxyCompactList}\small\item\em function used to initialize the \hyperlink{structsloop__data}{sloop\-\_\-data}. \end{DoxyCompactList}\item 
+int \hyperlink{sloop_8h_ad71c60994a3dad5e6f3aaccb087f3a11}{sloop\-\_\-timer\-\_\-new} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d, int msec, sloop\-\_\-callback\-\_\-timer handler, void $\ast$user\-\_\-data)
+\begin{DoxyCompactList}\small\item\em \-Function used to create a new timer. \end{DoxyCompactList}\item 
+int \hyperlink{sloop_8h_a5e83828d8f2fd249b7e58fcdcaaa4d9b}{sloop\-\_\-add\-\_\-fd} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d, \hyperlink{sloop_8h_a8accbe952aada7a7e7c3a30607f7c15b}{sloop\-\_\-mode} mode, int fd, sloop\-\_\-callback\-\_\-handler handler, void $\ast$user\-\_\-data)
+\begin{DoxyCompactList}\small\item\em function used to add a file descriptor to the \hyperlink{structsloop__data}{sloop\-\_\-data}. \end{DoxyCompactList}\item 
+int \hyperlink{sloop_8h_a2a41a240e6381f3e5f46264c191481f2}{sloop\-\_\-add\-\_\-timer} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d, int msec, sloop\-\_\-callback\-\_\-timer handler, void $\ast$user\-\_\-data)
+\begin{DoxyCompactList}\small\item\em function used to add timer to the \hyperlink{structsloop__data}{sloop\-\_\-data}. \end{DoxyCompactList}\item 
+int \hyperlink{sloop_8h_ac72381e2eb1e17c304bb9f6ae82baf58}{sloop\-\_\-remove\-\_\-fd} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d, \hyperlink{sloop_8h_a8accbe952aada7a7e7c3a30607f7c15b}{sloop\-\_\-mode} mode, int fd)
+\begin{DoxyCompactList}\small\item\em function used to remove a file descriptor from the \hyperlink{structsloop__data}{sloop\-\_\-data}. \end{DoxyCompactList}\item 
+int \hyperlink{sloop_8h_abe9e2b940877e89abe1af84853505efe}{sloop\-\_\-remove\-\_\-timer} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d, int id)
+\begin{DoxyCompactList}\small\item\em function used to remove a timer from the \hyperlink{structsloop__data}{sloop\-\_\-data}. \end{DoxyCompactList}\item 
+void \hyperlink{sloop_8h_adf64b05a3aae7d79a710f3bf630a9d01}{sloop\-\_\-read\-\_\-fd} (int fd)
+\begin{DoxyCompactList}\small\item\em function used to read a single fd and to begin the process of select. \end{DoxyCompactList}\item 
+void \hyperlink{sloop_8h_ab4ce6ff217b7f3a6313feb50ad408dc0}{sloop\-\_\-run\-\_\-step} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d)
+\begin{DoxyCompactList}\small\item\em function used to begin the loop waiting for an event but only one time. \end{DoxyCompactList}\item 
+void \hyperlink{sloop_8h_a6269d18211bfe3a032e495788b070646}{sloop\-\_\-run} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d)
+\begin{DoxyCompactList}\small\item\em function used to begin the loop waiting for an event. \end{DoxyCompactList}\item 
+int \hyperlink{sloop_8h_a579612864860dc68448caad6e8becd42}{sloop\-\_\-set\-\_\-timeout} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d, long msec)
+\begin{DoxyCompactList}\small\item\em function used to set the timeout of the \hyperlink{structsloop__data}{sloop\-\_\-data}. \end{DoxyCompactList}\item 
+void \hyperlink{sloop_8h_a01fda13c41ec12e053c910ac313a7ef9}{sloop\-\_\-destroy} (\hyperlink{structsloop__data}{sloop\-\_\-t} $\ast$sloop\-\_\-d)
+\begin{DoxyCompactList}\small\item\em function used to destroy the \hyperlink{structsloop__data}{sloop\-\_\-data}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Header for the sloop functions. \begin{DoxyAuthor}{\-Author}
+\-Ayoub \-A\-O\-U\-N\-E ( \-Spart\-Systems ) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{\-Version}
+0.\-1 
+\end{DoxyVersion}
+\begin{DoxyDate}{\-Date}
+29 septembre 2014
+\end{DoxyDate}
+\-This is a header file for the sloop functions, it contains all the prototype of functions needed to develop an application using this loop. 
+
+\subsection{\-Enumeration \-Type \-Documentation}
+\hypertarget{sloop_8h_a8accbe952aada7a7e7c3a30607f7c15b}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-mode@{sloop\-\_\-mode}}
+\index{sloop\-\_\-mode@{sloop\-\_\-mode}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-mode}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf sloop\-\_\-mode}}}\label{sloop_8h_a8accbe952aada7a7e7c3a30607f7c15b}
+
+
+\-Define the type of sloop mode. 
+
+\-Sloop\-\_\-mode is used to define whether you are using the loop for events comming to mode \-Read or write or for exceptions. 
+
+\subsection{\-Function \-Documentation}
+\hypertarget{sloop_8h_a5e83828d8f2fd249b7e58fcdcaaa4d9b}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-add\-\_\-fd@{sloop\-\_\-add\-\_\-fd}}
+\index{sloop\-\_\-add\-\_\-fd@{sloop\-\_\-add\-\_\-fd}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-add\-\_\-fd}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf sloop\-\_\-add\-\_\-fd} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d, }
+\item[{{\bf sloop\-\_\-mode}}]{mode, }
+\item[{int}]{fd, }
+\item[{sloop\-\_\-callback\-\_\-handler}]{handler, }
+\item[{void $\ast$}]{user\-\_\-data}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_a5e83828d8f2fd249b7e58fcdcaaa4d9b}
+
+
+function used to add a file descriptor to the \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data}. \\
+\hline
+{\em mode} & the mode (\-S\-L\-O\-O\-P\-\_\-\-R\-D,\-S\-L\-O\-O\-P\-\_\-\-W\-R,\-S\-L\-O\-O\-P\-\_\-\-E\-X\-C\-E\-P\-T). \\
+\hline
+{\em fd} & file descriptor. \\
+\hline
+{\em handler} & the callback function \\
+\hline
+{\em user\-\_\-data} & the user data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+0 if sucess or -\/1 if fail. 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_a2a41a240e6381f3e5f46264c191481f2}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-add\-\_\-timer@{sloop\-\_\-add\-\_\-timer}}
+\index{sloop\-\_\-add\-\_\-timer@{sloop\-\_\-add\-\_\-timer}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-add\-\_\-timer}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf sloop\-\_\-add\-\_\-timer} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d, }
+\item[{int}]{msec, }
+\item[{sloop\-\_\-callback\-\_\-timer}]{handler, }
+\item[{void $\ast$}]{user\-\_\-data}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_a2a41a240e6381f3e5f46264c191481f2}
+
+
+function used to add timer to the \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data}. \\
+\hline
+{\em msec} & time in milisecondes \\
+\hline
+{\em handler} & the callback function \\
+\hline
+{\em user\-\_\-data} & the user data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+0 if sucess or -\/1 if fail. 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_a01fda13c41ec12e053c910ac313a7ef9}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-destroy@{sloop\-\_\-destroy}}
+\index{sloop\-\_\-destroy@{sloop\-\_\-destroy}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-destroy}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf sloop\-\_\-destroy} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_a01fda13c41ec12e053c910ac313a7ef9}
+
+
+function used to destroy the \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_a4a893acd7b6cc20f062adceecc52a7eb}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-new@{sloop\-\_\-new}}
+\index{sloop\-\_\-new@{sloop\-\_\-new}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-new}]{\setlength{\rightskip}{0pt plus 5cm}{\bf sloop\-\_\-t}$\ast$ {\bf sloop\-\_\-new} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_a4a893acd7b6cc20f062adceecc52a7eb}
+
+
+function used to initialize the \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em \-N\-O\-N\-E} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+struct \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_adf64b05a3aae7d79a710f3bf630a9d01}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-read\-\_\-fd@{sloop\-\_\-read\-\_\-fd}}
+\index{sloop\-\_\-read\-\_\-fd@{sloop\-\_\-read\-\_\-fd}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-read\-\_\-fd}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf sloop\-\_\-read\-\_\-fd} (
+\begin{DoxyParamCaption}
+\item[{int}]{fd}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_adf64b05a3aae7d79a710f3bf630a9d01}
+
+
+function used to read a single fd and to begin the process of select. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em fd} & file descriptor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_ac72381e2eb1e17c304bb9f6ae82baf58}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-remove\-\_\-fd@{sloop\-\_\-remove\-\_\-fd}}
+\index{sloop\-\_\-remove\-\_\-fd@{sloop\-\_\-remove\-\_\-fd}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-remove\-\_\-fd}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf sloop\-\_\-remove\-\_\-fd} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d, }
+\item[{{\bf sloop\-\_\-mode}}]{mode, }
+\item[{int}]{fd}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_ac72381e2eb1e17c304bb9f6ae82baf58}
+
+
+function used to remove a file descriptor from the \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data}. \\
+\hline
+{\em mode} & the mode (\-S\-L\-O\-O\-P\-\_\-\-R\-D,\-S\-L\-O\-O\-P\-\_\-\-W\-R,\-S\-L\-O\-O\-P\-\_\-\-E\-X\-C\-E\-P\-T). \\
+\hline
+{\em fd} & file descriptor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+0 if sucess or -\/1 if fail. 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_abe9e2b940877e89abe1af84853505efe}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-remove\-\_\-timer@{sloop\-\_\-remove\-\_\-timer}}
+\index{sloop\-\_\-remove\-\_\-timer@{sloop\-\_\-remove\-\_\-timer}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-remove\-\_\-timer}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf sloop\-\_\-remove\-\_\-timer} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d, }
+\item[{int}]{id}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_abe9e2b940877e89abe1af84853505efe}
+
+
+function used to remove a timer from the \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data}. \\
+\hline
+{\em id} & the identification of the timer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+0 if sucess or -\/1 if fail. 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_a6269d18211bfe3a032e495788b070646}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-run@{sloop\-\_\-run}}
+\index{sloop\-\_\-run@{sloop\-\_\-run}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-run}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf sloop\-\_\-run} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_a6269d18211bfe3a032e495788b070646}
+
+
+function used to begin the loop waiting for an event. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_ab4ce6ff217b7f3a6313feb50ad408dc0}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-run\-\_\-step@{sloop\-\_\-run\-\_\-step}}
+\index{sloop\-\_\-run\-\_\-step@{sloop\-\_\-run\-\_\-step}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-run\-\_\-step}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf sloop\-\_\-run\-\_\-step} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_ab4ce6ff217b7f3a6313feb50ad408dc0}
+
+
+function used to begin the loop waiting for an event but only one time. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_a579612864860dc68448caad6e8becd42}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-set\-\_\-timeout@{sloop\-\_\-set\-\_\-timeout}}
+\index{sloop\-\_\-set\-\_\-timeout@{sloop\-\_\-set\-\_\-timeout}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-set\-\_\-timeout}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf sloop\-\_\-set\-\_\-timeout} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d, }
+\item[{long}]{msec}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_a579612864860dc68448caad6e8becd42}
+
+
+function used to set the timeout of the \hyperlink{structsloop__data}{sloop\-\_\-data}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data}. \\
+\hline
+{\em msec} & time in milisecondes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+0 if sucess or -\/1 if fail. 
+\end{DoxyReturn}
+\hypertarget{sloop_8h_ad71c60994a3dad5e6f3aaccb087f3a11}{\index{sloop.\-h@{sloop.\-h}!sloop\-\_\-timer\-\_\-new@{sloop\-\_\-timer\-\_\-new}}
+\index{sloop\-\_\-timer\-\_\-new@{sloop\-\_\-timer\-\_\-new}!sloop.h@{sloop.\-h}}
+\subsubsection[{sloop\-\_\-timer\-\_\-new}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf sloop\-\_\-timer\-\_\-new} (
+\begin{DoxyParamCaption}
+\item[{{\bf sloop\-\_\-t} $\ast$}]{sloop\-\_\-d, }
+\item[{int}]{msec, }
+\item[{sloop\-\_\-callback\-\_\-timer}]{handler, }
+\item[{void $\ast$}]{user\-\_\-data}
+\end{DoxyParamCaption}
+)}}\label{sloop_8h_ad71c60994a3dad5e6f3aaccb087f3a11}
+
+
+\-Function used to create a new timer. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sloop\-\_\-d} & \hyperlink{structsloop__data}{sloop\-\_\-data}. \\
+\hline
+{\em msec} & time in milisecondes \\
+\hline
+{\em handler} & the callback function \\
+\hline
+{\em user\-\_\-data} & the user data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+0 if sucess or -\/1 if fail. 
+\end{DoxyReturn}
