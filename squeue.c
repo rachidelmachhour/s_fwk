@@ -1,3 +1,14 @@
+/**
+ * \file squeue.c
+ * \brief Definition of the squeue functions
+ * \author Ayoub AOUNE ( SpartSystems )
+ * \version 0.1
+ * \date 29 septembre 2014
+ *
+ * This is file is used to code the functions needed to use this queue.
+ *
+ */
+
 
 #include <stdlib.h>
 #include <stdio.h>

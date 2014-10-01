@@ -1,3 +1,14 @@
+/**
+ * \file sloop.c
+ * \brief Definition of the sloop functions
+ * \author Ayoub AOUNE ( SpartSystems )
+ * \version 0.1
+ * \date 29 septembre 2014
+ *
+ * This is file is used to code the functions needed to use this loop.
+ *
+ */
+
 #include "sloop.h"
 
 void sloop_destroy_table(struct sloop_table *table);

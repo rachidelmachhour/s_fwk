@@ -1,3 +1,14 @@
+/**
+ * \file slist.c
+ * \brief Definition of the slist functions
+ * \author Ayoub AOUNE ( SpartSystems )
+ * \version 0.1
+ * \date 29 septembre 2014
+ *
+ * This is file is used to code the functions needed to use this list.
+ *
+ */
+
 
 #include <stdlib.h>
 #include <stdio.h>
