@@ -206,7 +206,7 @@ int s_socket_listen(int socket, int backlog);
  * \param socket : the file descriptor of the socket.
  * \param address : used by the socket when an application want to communicate following the internet style.
  * \param address_len : the length of the sockaddr.
- * \return 0 on success or -1 when error occurs.
+ * \return Returns the file descriptor of the socket which is accepted.
  */
 int s_socket_accept(int socket, struct sockaddr *address,int *address_len);
 
