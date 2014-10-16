@@ -30,6 +30,8 @@
 #ifndef SSOCKET_H
 #define SSOCKET_H
 
+typedef int ssocket_t;
+
 #ifdef _WIN32 
 struct iovec {                
               void  *iov_base;             
@@ -56,7 +58,7 @@ struct msghdr {
  * \param protocol : specifies a particular protocol to be used with the socket.
  * \return On success, a file descriptor. On error, -1 is returned.
  */
-int s_socket_create(int domain, int type, int protocol);
+ssocket_t s_socket_create(int domain, int type, int protocol);
 
 
 /**
@@ -67,7 +69,7 @@ int s_socket_create(int domain, int type, int protocol);
  * \param port : the port.
  * \param sockaddr : used by the socket when an application want to communicate following the internet style.
  * \param socklen : the length of the sockaddr.
- * \return 0 on success or -1 when error occurs.
+ * \return return the file descriptor of the socket created.
  */
 int s_socket_addr_info(unsigned long ip, int port, void *sockaddr, int socklen);
 
@@ -80,7 +82,7 @@ int s_socket_addr_info(unsigned long ip, int port, void *sockaddr, int socklen);
  * \param address_len : the length of the sockaddr.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_bind(int socket, const struct sockaddr *address,int address_len);
+int s_socket_bind(ssocket_t socket, const struct sockaddr *address,int address_len);
 
 /**
  * \fn int s_socket_get_peer_name(int socket, const struct sockaddr *address,int address_len);
@@ -91,7 +93,7 @@ int s_socket_bind(int socket, const struct sockaddr *address,int address_len);
  * \param address_len : the length of the sockaddr.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_get_peer_name(int socket, struct sockaddr *address,int *address_len);
+int s_socket_get_peer_name(ssocket_t socket, struct sockaddr *address,int *address_len);
 
 /**
  * \fn int s_socket_get_sock_name(int socket, const struct sockaddr *address,int address_len);
@@ -102,7 +104,7 @@ int s_socket_get_peer_name(int socket, struct sockaddr *address,int *address_len
  * \param address_len : the length of the sockaddr.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_get_sock_name(int socket, struct sockaddr *address,int *address_len);
+int s_socket_get_sock_name(ssocket_t socket, struct sockaddr *address,int *address_len);
 
 /**
  * \fn int s_socket_connect(int socket, const struct sockaddr *address,int address_len);
@@ -113,7 +115,7 @@ int s_socket_get_sock_name(int socket, struct sockaddr *address,int *address_len
  * \param address_len : the length of the sockaddr.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_connect(int socket, const struct sockaddr *address,int address_len);
+int s_socket_connect(ssocket_t socket, const struct sockaddr *address,int address_len);
 
 /**
  * \fn size_t s_socket_send(int socket, const void *message, size_t length, int flags);
@@ -125,7 +127,7 @@ int s_socket_connect(int socket, const struct sockaddr *address,int address_len)
  * \param flags : the flags of the function send.
  * \return On success, these calls return the number of characters sent. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_send(int socket, const void *message, size_t length, int flags);
+size_t s_socket_send(ssocket_t socket, const void *message, size_t length, int flags);
 
 /**
  * \fn size_t s_socket_sendto(int socket, const void *message, size_t length, int flags,const struct sockaddr *dest_addr, int dest_len);
@@ -139,7 +141,7 @@ size_t s_socket_send(int socket, const void *message, size_t length, int flags);
  * \param dest_len : the length of the sockaddr.
  * \return On success, these calls return the number of characters sent. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_sendto(int socket, const void *message, size_t length, int flags,const struct sockaddr *dest_addr, int dest_len);
+size_t s_socket_sendto(ssocket_t socket, const void *message, size_t length, int flags,const struct sockaddr *dest_addr, int dest_len);
 
 /**
  * \fn size_t s_socket_send_msg(int socket, const struct msghdr *msg, int flags);
@@ -150,7 +152,7 @@ size_t s_socket_sendto(int socket, const void *message, size_t length, int flags
  * \param flags : the flags of the function send.
  * \return On success, these calls return the number of characters sent. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_send_msg(int socket, const struct msghdr *msg, int flags);
+size_t s_socket_send_msg(ssocket_t socket, const struct msghdr *msg, int flags);
 
 /**
  * \fn size_t s_socket_recv(int socket, void *buffer, size_t length, int flags);
@@ -162,7 +164,7 @@ size_t s_socket_send_msg(int socket, const struct msghdr *msg, int flags);
  * \param flags : the flags of the function recv.
  * \return On success, these calls return the number of characters received. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_recv(int socket, void *buffer, size_t length, int flags);
+size_t s_socket_recv(ssocket_t socket, void *buffer, size_t length, int flags);
 
 /**
  * \fn size_t s_socket_recvfrom(int socket, void *buffer, size_t length,int flags, struct sockaddr *address, int *address_len);
@@ -176,7 +178,7 @@ size_t s_socket_recv(int socket, void *buffer, size_t length, int flags);
  * \param dest_len : the length of the sockaddr.
  * \return On success, these calls return the number of characters received. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_recvfrom(int socket, void *buffer, size_t length,int flags, struct sockaddr *address, int *address_len);
+size_t s_socket_recvfrom(ssocket_t socket, void *buffer, size_t length,int flags, struct sockaddr *address, int *address_len);
 
 /**
  * \fn size_t s_socket_recv_msg(int socket, struct msghdr *msg, int flags);
@@ -187,7 +189,7 @@ size_t s_socket_recvfrom(int socket, void *buffer, size_t length,int flags, stru
  * \param flags : the flags of the function recv.
  * \return On success, these calls return the number of characters sent. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_recv_msg(int socket, struct msghdr *msg, int flags);
+size_t s_socket_recv_msg(ssocket_t socket, struct msghdr *msg, int flags);
 
 /**
  * \fn int s_socket_listen(int socket, int backlog);
@@ -197,7 +199,7 @@ size_t s_socket_recv_msg(int socket, struct msghdr *msg, int flags);
  * \param backlog : defines the maximum length of the  queue  of pending  connections.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_listen(int socket, int backlog);
+int s_socket_listen(ssocket_t socket, int backlog);
 
 /**
  * \fn int s_socket_accept(int socket, struct sockaddr *address,int *address_len);
@@ -208,7 +210,7 @@ int s_socket_listen(int socket, int backlog);
  * \param address_len : the length of the sockaddr.
  * \return Returns the file descriptor of the socket which is accepted.
  */
-int s_socket_accept(int socket, struct sockaddr *address,int *address_len);
+ssocket_t s_socket_accept(ssocket_t socket, struct sockaddr *address,int *address_len);
 
 /**
  * \fn int s_socket_close(int socket);
@@ -217,7 +219,7 @@ int s_socket_accept(int socket, struct sockaddr *address,int *address_len);
  * \param socket : the file descriptor of the socket.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_close(int socket);
+int s_socket_close(ssocket_t socket);
 
 /**
  * \fn int s_socket_shutdown(int socket, int how);
@@ -227,7 +229,7 @@ int s_socket_close(int socket);
  * \param how : how to shutdown this connection.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_shutdown(int socket, int how);
+int s_socket_shutdown(ssocket_t socket, int how);
 
 /**
  * \fn int s_socket_get_sock_opt(int socket, int level, int option_name,void *option_value, int *option_len);
@@ -240,7 +242,7 @@ int s_socket_shutdown(int socket, int how);
  * \param option_len : the length of the option choosed.
  * \return 0 on success or -1 when error occurs. 
  */
-int s_socket_get_sock_opt(int socket, int level, int option_name,void *option_value, int *option_len);
+int s_socket_get_sock_opt(ssocket_t socket, int level, int option_name,void *option_value, int *option_len);
 
 /**
  * \fn int s_socket_set_sock_opt(int socket, int level, int option_name,const void *option_value, int *option_len);
@@ -253,7 +255,7 @@ int s_socket_get_sock_opt(int socket, int level, int option_name,void *option_va
  * \param option_len : the length of the option choosed.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_set_sock_opt(int socket, int level, int option_name,const void *option_value, int option_len);
+int s_socket_set_sock_opt(ssocket_t socket, int level, int option_name,const void *option_value, int option_len);
 
 #endif
 
