@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "port.h"
 #include "ssocket-udp.h"
 
 int main(void)

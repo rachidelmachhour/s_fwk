@@ -3,6 +3,22 @@
 
 #define BUFSIZE 2048
 
+info_t * info_init()
+{
+	info_t * info_s;
+	info_s= (info_t *)malloc(sizeof(info_t));
+	info_s->address_len=sizeof(info_s->address);
+	return info_s;
+}
+
+void info_deinit(info_t * info_s)
+{
+	if(info_s == NULL)
+		return -1;
+	
+	free(info_s);
+}
+
 ssocket_t * ssocket_init()
 {
 	ssocket_t *socket_s;
@@ -30,7 +46,7 @@ int s_socket_create(ssocket_t *socket_s,int domain, int type, int protocol)
 	return 0;
 }
 
-int s_socket_addr_info(unsigned long ip, int port, ssocket_t *socket_s)
+int s_socket_addr_info(ssocket_t *socket_s, unsigned long ip, int port)
 {
 	memset(&socket_s->address, 0, socket_s->address_len);
 
@@ -96,10 +112,10 @@ size_t s_socket_send(ssocket_t *socket_s, const void *message, size_t length, in
 	return len;
 }
 
-size_t s_socket_sendto(ssocket_t *socket_s, const void *message, size_t length, int flags,ssocket_t *socket_dest)
+size_t s_socket_sendto(ssocket_t *socket_s, const void *message, size_t length, int flags,info_t * info_s)
 {
 	size_t len;
-	len = sendto(socket_s->socket,message, length, flags,&socket_dest->address, socket_dest->address_len);
+	len = sendto(socket_s->socket,message, length, flags,&info_s->address, info_s->address_len);
 	if(len==-1)
 	{
 		perror("sendto error");
@@ -178,10 +194,10 @@ size_t s_socket_recv(ssocket_t *socket_s, void *buffer, size_t length, int flags
 	return len;
 }
 
-size_t s_socket_recvfrom(ssocket_t *socket_s, void *buffer, size_t length,int flags, ssocket_t *socket_src)
+size_t s_socket_recvfrom(ssocket_t *socket_s, void *buffer, size_t length,int flags,info_t * info_s)
 {
 	size_t len;
-	len = recvfrom(socket_s->socket,buffer, length,flags, &socket_src->address, &socket_src->address_len);
+	len = recvfrom(socket_s->socket,buffer, length,flags, &info_s->address, &info_s->address_len);
 	if(len==-1)
 	{
 		perror("recvfrom error");
@@ -243,10 +259,10 @@ int s_socket_listen(ssocket_t *socket_s, int backlog)
 	return 0;
 }
 
-int s_socket_accept(ssocket_t *socket_s, ssocket_t *socket_cli)
+int s_socket_accept(ssocket_t *socket_s, info_t * info_s)
 {
 	int ret;
-	if ((ret=accept(socket_s->socket, (struct sockaddr *)&socket_cli->address, (int *)&socket_cli->address_len)) < 0) 
+	if ((ret=accept(socket_s->socket, (struct sockaddr *)&info_s->address, (int *)&info_s->address_len)) < 0) 
 		return -1;
 
 	return ret;

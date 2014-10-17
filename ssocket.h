@@ -47,6 +47,12 @@ struct msghdr {
 };
 #endif 
 
+struct info_socket
+{
+	struct sockaddr_in address;
+	int address_len;
+};
+
 /**
  * \struct ssocket_data
  * \brief define a socket data.
@@ -74,6 +80,10 @@ struct ssocket_data
 };
 
 typedef struct ssocket_data ssocket_t;
+
+typedef struct info_socket info_t;
+
+info_t * info_init();
 
 /**
  * \fn ssocket_t * ssocket_init();
@@ -104,7 +114,7 @@ int s_socket_create(ssocket_t *socket_s,int domain, int type, int protocol);
  * \param socklen : the length of the sockaddr.
  * \return 0 on success or -1 when error occurs.
  */
-int s_socket_addr_info(unsigned long ip, int port, ssocket_t *socket_s);
+int s_socket_addr_info(ssocket_t *socket_s ,unsigned long ip, int port);
 
 /**
  * \fn int s_socket_bind(int socket, const struct sockaddr *address,int address_len);
@@ -174,7 +184,7 @@ size_t s_socket_send(ssocket_t *socket_s, const void *message, size_t length, in
  * \param dest_len : the length of the sockaddr.
  * \return On success, these calls return the number of characters sent. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_sendto(ssocket_t *socket_s, const void *message, size_t length, int flags,ssocket_t *socket_dest);
+size_t s_socket_sendto(ssocket_t *socket_s, const void *message, size_t length, int flags,info_t * info_s);
 
 /**
  * \fn size_t s_socket_send_msg(int socket, const struct msghdr *msg, int flags);
@@ -211,7 +221,7 @@ size_t s_socket_recv(ssocket_t *socket_s, void *buffer, size_t length, int flags
  * \param dest_len : the length of the sockaddr.
  * \return On success, these calls return the number of characters received. On error, -1 is returned, and errno is set appropriately. 
  */
-size_t s_socket_recvfrom(ssocket_t *socket_s, void *buffer, size_t length,int flags, ssocket_t *socket_src);
+size_t s_socket_recvfrom(ssocket_t *socket_s, void *buffer, size_t length,int flags,info_t * info_s);
 
 /**
  * \fn size_t s_socket_recv_msg(int socket, struct msghdr *msg, int flags);
@@ -243,7 +253,7 @@ int s_socket_listen(ssocket_t *socket_s, int backlog);
  * \param address_len : the length of the sockaddr.
  * \return Returns the file descriptor of the socket which is accepted.
  */
-int s_socket_accept(ssocket_t *socket_s, ssocket_t *socket_cli);
+int s_socket_accept(ssocket_t *socket_s,info_t * info_s);
 
 /**
  * \fn int s_socket_close(int socket);
