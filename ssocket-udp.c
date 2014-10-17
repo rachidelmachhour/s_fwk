@@ -104,15 +104,21 @@ int udp_server_recv(udpsrv_t *srv, unsigned char *buf,int len, struct udpcli_inf
 	ssocket_t *socket_s;
 	int recvlen;
 	char message[2048];
+	printf("0 \n");
 	socket_s=srv->socket_d;
+	printf("1 \n");
     info_s=info_init();
-
+    printf("2 \n");
 	recvlen = s_socket_recvfrom(socket_s, message, len, 0, info_s);
+	printf("3 \n recvlen : %d \n",recvlen);
 	if (recvlen > 0) {
 		message[recvlen] = 0;
 		cli_info->ip=inet_ntoa(info_s->address.sin_addr);
+		printf("4 \n");
 		cli_info->port=ntohs(info_s->address.sin_port);
+		printf("5 \n");
 		strcpy(buf,message);
+		printf("6 \n");
 	}
 }
 

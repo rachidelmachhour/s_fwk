@@ -11,8 +11,9 @@ int main(int argc, char **argv)
 	unsigned char message[2048];
     udpsrv_t * srv;
     struct udpcli_info *cli_info;
-	
 	srv=new_udp_server(4000);
+	
+	cli_info=(struct udpcli_info *)malloc(sizeof(struct udpcli_info ));
 	udp_server_recv(srv, message,sizeof(message),cli_info);
 
 	printf("this is the message : %s \n \n", message);
