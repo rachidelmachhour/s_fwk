@@ -66,10 +66,10 @@ struct ssocket_data
 	struct sockaddr_in address;
 	int address_len;
 	int nb_buf_sent;
-	uint64_t nb_byte_sent;
+	unsigned int nb_byte_sent;
 	int nb_error_sent;
 	int nb_buf_recv;
-	uint64_t nb_byte_recv;
+	unsigned int nb_byte_recv;
 	int nb_error_recv;
 };
 
