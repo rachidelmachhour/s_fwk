@@ -1,13 +1,3 @@
-/**
- * \file ssocket-udp.h
- * \brief Header for the udp s_socket functions
- * \author Ayoub AOUNE ( SpartSystems )
- * \version 0.1
- * \date 17 octobre 2014
- *
- * This is a header file for the udp s_socket functions, it contains all the prototypes of functions needed to develop an application using this socket in both Linux and Windows.
- *
- */
 
 #include "ssocket.h"
 
@@ -15,35 +5,51 @@
 #ifndef SSOCKET_UDP_H
 #define SSOCKET_UDP_H
 
-struct ssocket_data
+struct udpcli_info
 {
-	ssocket_t socket;
-	struct sockaddr *address;
-	int address_len;
-	int num_buf_sent;
-	int nb_byte_sent;
-	int nb_error;
+	char *ip;
+	int port;
 };
 
-typedef struct ssocket_data ssocket_d;
+struct udp_client
+{
+    ssocket_t *socket_d;
+};
 
-ssocket_d * new_udp_client();
+struct udp_server
+{
+    ssocket_t *socket_d;
+};
 
-ssocket_d * new_udp_server(int port);
+typedef struct udp_client udpcli_t;
 
-int udp_client_set_port(int port);
-
-ssocket_t udp_client_get_fd(ssocket_d * socket_s);
-
-int udp_client_get_port(ssocket_d * socket_s);
-
-int udp_client_send(ssocket_d *socket_s, char *ip, int port, char *message);
-
-int udp_server_recv(ssocket_d *socket_s, char *message, ssocket_d *socket_client);
-
-int udp_server_responseto(ssocket_d *socket_s, char *message, ssocket_d *socket_client);
-
-int udp_server_broadcast(ssocket_d *socket_s, char *message);
+typedef struct udp_server udpsrv_t;
 
 
-#endif 
+//client
+
+udpcli_t * new_udp_client();
+
+ssocket_t * udp_cli_get_socket_ptr(udpcli_t *cli);
+
+int udp_cli_get_socket_fd(udpcli_t *cli);
+
+int udp_cli_recv(udpcli_t *cli, unsigned char *buf,int len);
+
+int udp_client_send(udpcli_t *cli, char *ip, int port, unsigned char * buf,int len);
+
+
+//Server
+
+udpsrv_t * new_udp_server(int port);
+
+ssocket_t * udp_srv_get_socket_ptr(udpsrv_t *srv);
+
+int udp_srv_get_socket_fd(udpsrv_t *srv);
+
+int udp_server_recv(udpsrv_t *srv, unsigned char *buf,int len, struct udpcli_info *cli_info);
+
+int udp_server_responseto(udpsrv_t *srv,unsigned char *buf,int len, struct udpcli_info *cli_info);
+
+
+#endif
