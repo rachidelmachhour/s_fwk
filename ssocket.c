@@ -11,14 +11,6 @@ info_t * info_init()
 	return info_s;
 }
 
-void info_deinit(info_t * info_s)
-{
-	if(info_s == NULL)
-		return -1;
-	
-	free(info_s);
-}
-
 ssocket_t * ssocket_init()
 {
 	ssocket_t *socket_s;
