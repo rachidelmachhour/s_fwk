@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: s_fwk
+Description: Library for os abstration layer
+URL: http://github.com/spartsystems/s_fwk
+Version: 0.1
+Libs: -L${libdir} -ls_fwk 
+Cflags: -pthread -I${includedir}/abus
