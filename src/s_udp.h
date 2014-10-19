@@ -1,9 +1,9 @@
 
-#include "ssocket.h"
+#include "s_socket.h"
 
 
-#ifndef SSOCKET_UDP_H
-#define SSOCKET_UDP_H
+#ifndef S_UDP_H
+#define S_UDP_H
 
 struct udpcli_info
 {
@@ -25,6 +25,8 @@ typedef struct udp_client udpcli_t;
 
 typedef struct udp_server udpsrv_t;
 
+
+struct udpcli_info * udpcli_info_init();
 
 //client
 

@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "squeue.h"
+#include "s_queue.h"
 
 struct s_queue * s_queue_new()
 {

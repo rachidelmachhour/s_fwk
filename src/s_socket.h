@@ -27,8 +27,8 @@
 #endif 
 
 
-#ifndef SSOCKET_H
-#define SSOCKET_H
+#ifndef S_SOCKET_H
+#define S_SOCKET_H
 
 #ifdef _WIN32 
 struct iovec {                

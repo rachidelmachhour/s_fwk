@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "slist.h"
+#include "s_list.h"
 
 struct s_list *s_list_new()
 {

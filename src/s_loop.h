@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef SLOOP_H
-#define SLOOP_H
+#ifndef S_LOOP_H
+#define S_LOOP_H
 
 #include <math.h>
 #include <sys/time.h>

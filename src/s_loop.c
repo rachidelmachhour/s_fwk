@@ -9,7 +9,7 @@
  *
  */
 
-#include "sloop.h"
+#include "s_loop.h"
 
 void sloop_destroy_table(struct sloop_table *table);
 

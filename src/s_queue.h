@@ -9,10 +9,10 @@
  *
  */
 
-#include "slist.h"
+#include "s_list.h"
 
-#ifndef SQUEUE_H
-#define SQUEUE_H
+#ifndef S_QUEUE_H
+#define S_QUEUE_H
 
 typedef void (*squeue_callback_print)(void *user_data);
 

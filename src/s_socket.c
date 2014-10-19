@@ -1,5 +1,5 @@
 
-#include "ssocket.h"
+#include "s_socket.h"
 
 #define BUFSIZE 2048
 

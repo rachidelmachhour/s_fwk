@@ -10,8 +10,8 @@
  */
 
 
-#ifndef SLIST_H
-#define SLIST_H
+#ifndef S_LIST_H
+#define S_LIST_H
 
 typedef void (*slist_callback_print)(void *user_data);
 

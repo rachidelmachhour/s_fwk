@@ -1,7 +1,14 @@
 
 
-#include "ssocket-udp.h"
+#include "s_udp.h"
 
+
+struct udpcli_info * udpcli_info_init()
+{
+	struct udpcli_info *cli_info;
+	cli_info=(struct udpcli_info *)malloc(sizeof(struct udpcli_info ));
+	return cli_info;
+}
 
 udpcli_t * new_udp_client()
 {

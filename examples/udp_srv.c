@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "ssocket-udp.h"
+#include "s_udp.h"
 
 #define BUFSIZE 2048
 
@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     struct udpcli_info *cli_info;
 	srv=new_udp_server(4000);
 	
-	cli_info=(struct udpcli_info *)malloc(sizeof(struct udpcli_info ));
+	cli_info=udpcli_info_init();
 	udp_server_recv(srv, message,sizeof(message),cli_info);
 
 	printf("this is the message : %s \n \n", message);

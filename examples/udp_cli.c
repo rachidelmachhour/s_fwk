@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "ssocket-udp.h"
+#include "s_udp.h"
 
 int main(void)
 {
@@ -20,5 +20,6 @@ int main(void)
 	udp_cli_recv(cli, buf,2048);
 
 	printf(" Message received is : %s \n",buf);
+	
 	return 0;
 }
