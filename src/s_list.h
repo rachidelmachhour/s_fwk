@@ -1,5 +1,5 @@
 /**
- * \file slist.h
+ * \file s_list.h
  * \brief Header for the s_list functions
  * \author Ayoub AOUNE ( SpartSystems )
  * \version 0.1

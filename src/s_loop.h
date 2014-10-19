@@ -1,5 +1,5 @@
 /**
- * \file sloop.h
+ * \file s_loop.h
  * \brief Header for the sloop functions
  * \author Ayoub AOUNE ( SpartSystems )
  * \version 0.1

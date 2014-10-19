@@ -1,5 +1,5 @@
 /**
- * \file ssocket.h
+ * \file s_socket.h
  * \brief Header for the s_socket functions
  * \author Ayoub AOUNE ( SpartSystems )
  * \version 0.1
@@ -47,6 +47,14 @@ struct msghdr {
 };
 #endif 
 
+/**
+ * \struct info_socket
+ * \brief define the info of the socket.
+ * 
+ * - address : used by the socket when an application want to communicate following the internet style.
+ * - address_len : the length of the address. 
+ *
+ */
 struct info_socket
 {
 	struct sockaddr_in address;
@@ -57,7 +65,6 @@ struct info_socket
  * \struct ssocket_data
  * \brief define a socket data.
  *
- * this queue is used to define a fifo queue
  * - socket : the file descriptor of the socket. 
  * - address : used by the socket when an application want to communicate following the internet style.
  * - address_len : the length of the address. 
@@ -83,6 +90,14 @@ typedef struct ssocket_data ssocket_t;
 
 typedef struct info_socket info_t;
 
+
+/**
+ * \fn info_t * info_init();
+ * \brief function used to initilize the socket_info.
+ *
+ * \param NONE
+ * \return the new socket_info initilized.
+ */
 info_t * info_init();
 
 /**

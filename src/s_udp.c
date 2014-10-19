@@ -1,4 +1,13 @@
-
+/**
+ * \file s_udp.c
+ * \brief Definition of the udp socket functions
+ * \author Ayoub AOUNE ( SpartSystems )
+ * \version 0.1
+ * \date 29 septembre 2014
+ *
+ * This is file is used to code the functions needed to use udp socket.
+ *
+ */
 
 #include "s_udp.h"
 

@@ -1,5 +1,5 @@
 /**
- * \file sloop.c
+ * \file s_loop.c
  * \brief Definition of the sloop functions
  * \author Ayoub AOUNE ( SpartSystems )
  * \version 0.1

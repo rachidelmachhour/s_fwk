@@ -1,5 +1,5 @@
 /**
- * \file slist.c
+ * \file s_list.c
  * \brief Definition of the slist functions
  * \author Ayoub AOUNE ( SpartSystems )
  * \version 0.1

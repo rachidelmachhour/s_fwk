@@ -1,5 +1,5 @@
 /**
- * \file squeue.c
+ * \file s_queue.c
  * \brief Definition of the squeue functions
  * \author Ayoub AOUNE ( SpartSystems )
  * \version 0.1

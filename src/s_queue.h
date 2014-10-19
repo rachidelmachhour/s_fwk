@@ -1,5 +1,5 @@
 /**
- * \file squeue.h
+ * \file s_queue.h
  * \brief Header for the s_queue functions
  * \author Ayoub AOUNE ( SpartSystems )
  * \version 0.1
