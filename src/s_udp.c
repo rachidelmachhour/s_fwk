@@ -8,7 +8,7 @@
  * This is file is used to code the functions needed to use udp socket.
  *
  */
-
+#include <stdlib.h>
 #include "s_udp.h"
 
 
