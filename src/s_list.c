@@ -44,6 +44,7 @@ int s_list_clean(struct s_list *list_d)
 {
 	list_d->next=NULL;
 	list_d->length=0;
+	return 0;
 }
 
 int s_list_destroy(struct s_list *list_d)
@@ -52,6 +53,7 @@ int s_list_destroy(struct s_list *list_d)
 		return -1;
 	
 	free(list_d);
+	return 0;
 }
 
 int s_list_is_empty(struct s_list *list_d)
@@ -120,6 +122,7 @@ int s_list_print(struct s_list *list_d,slist_callback_print handler)
 		handler(list->data);
 		list=list->next;
 	}
+	return 0;
 }
 
 int s_list_insert_last(struct s_list *list_d, void *item)
