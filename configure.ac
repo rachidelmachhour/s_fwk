@@ -53,11 +53,16 @@ LT_INIT([win32-dll])
 LT_LANG([Windows Resource])
 
 # Set some internal variables depending on the platform for later use.
-case "${host}" in
-    *)
-        abus_unix=yes
-       ;;
-esac
+AM_CONDITIONAL([AIX],    [AS_CASE([$host_os],[aix*],          [true], [false])])
+AM_CONDITIONAL([ANDROID],[AS_CASE([$host_os],[linux-android*],[true], [false])])
+AM_CONDITIONAL([DARWIN], [AS_CASE([$host_os],[darwin*],       [true], [false])])
+AM_CONDITIONAL([FREEBSD],[AS_CASE([$host_os],[freebsd*],      [true], [false])])
+AM_CONDITIONAL([LINUX],  [AS_CASE([$host_os],[linux*],        [true], [false])])
+AM_CONDITIONAL([NETBSD], [AS_CASE([$host_os],[netbsd*],       [true], [false])])
+AM_CONDITIONAL([OPENBSD],[AS_CASE([$host_os],[openbsd*],      [true], [false])])
+AM_CONDITIONAL([SUNOS],  [AS_CASE([$host_os],[solaris*],      [true], [false])])
+AM_CONDITIONAL([WINNT],  [AS_CASE([$host_os],[mingw*],        [true], [false])])
+
 
 
 

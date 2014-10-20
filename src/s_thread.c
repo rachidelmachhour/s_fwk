@@ -57,7 +57,7 @@ int s_thread_create(s_thread_t *tid, void (*callback)(void *arg), void *user_dat
   info->data = user_data;
 
 #ifdef _WIN32
-  *tid = (HANDLE) _beginthreadex(NULL, 0, internel_thread_start, info, 0, NULL);
+  *tid = (HANDLE) _beginthreadex(NULL, 0, internal_thread_start, info, 0, NULL);
   err = *tid ? 0 : errno;
 #else
   err = pthread_create(tid, NULL, internal_thread_start, info);
@@ -82,7 +82,7 @@ unsigned long s_thread_self(void) {
 int s_thread_join(s_thread_t *tid) {
 #ifdef _WIN32
   	if (WaitForSingleObject(*tid, INFINITE))
-    	return -1
+    	return -1;
   	else {
     	CloseHandle(*tid);
     	*tid = 0;
@@ -187,14 +187,15 @@ void s_sem_wait(s_sem_t* sem) {
 
 int s_sem_trywait(s_sem_t* sem) {
 #ifdef _WIN32
-  DWORD r = WaitForSingleObject(*sem, 0);
+  	DWORD r = WaitForSingleObject(*sem, 0);
 
-  if (r == WAIT_OBJECT_0)
-    return 0;
+  	if (r == WAIT_OBJECT_0)
+    	return 0;
 
-  if (r == WAIT_TIMEOUT)
-    return -1;
+  	if (r == WAIT_TIMEOUT)
+    	return -1;
 	/* fix-me check error*/
+	return 0;
 #else
   	int r;
 
@@ -217,6 +218,7 @@ int s_sem_trywait(s_sem_t* sem) {
 int s_cond_init(s_cond_t* cond) {
 #ifdef _WIN32
 
+	return 0;
 #else
   	pthread_condattr_t attr;
   	int err;
@@ -243,6 +245,7 @@ error2:
   	pthread_condattr_destroy(&attr);
   	return -err;
 #endif
+
 }
 
 void s_cond_destroy(s_cond_t* cond) {
@@ -282,6 +285,7 @@ void s_cond_wait(s_cond_t* cond, s_mutex_t* mutex) {
 int s_cond_timedwait(s_cond_t* cond, s_mutex_t* mutex, uint64_t timeout) {
 #ifdef _WIN32
 
+	return 0;
 #else
   	int r;
   	struct timespec ts;

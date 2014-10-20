@@ -31,6 +31,7 @@
 #define S_SOCKET_H
 
 #ifdef _WIN32 
+typedef   int    socklen_t;
 struct iovec {                
               void  *iov_base;             
               size_t iov_len;            

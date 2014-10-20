@@ -218,18 +218,18 @@ size_t s_socket_recv_msg(ssocket_t *socket_s, struct msghdr *msg, int flags)
 	return len;
 #else
 	int i, msg_len = 0;
-	ssize_t ret;
+	ssize_t ret = 0;
 
 	if (msg->msg_iovlen == 1) {
 		return recvfrom(socket_s->socket, msg->msg_iov[0].iov_base, msg->msg_iov[0].iov_len,
-						flags, msg->msg_name, msg->msg_namelen);
+						flags, msg->msg_name, &msg->msg_namelen);
 	}
 
 	msg_len = 0;
 
 	for (i=0; i < (int)msg->msg_iovlen; i++)
 	{
-		ret=recvfrom(socket_s->socket, msg->msg_iov[i].iov_base, msg_len, flags, msg->msg_name, msg->msg_namelen);
+		ret=recvfrom(socket_s->socket, msg->msg_iov[i].iov_base, msg_len, flags, msg->msg_name, &msg->msg_namelen);
 		if(ret==-1)
 		{
 			socket_s->nb_error_recv++;

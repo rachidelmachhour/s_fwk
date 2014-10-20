@@ -13,8 +13,12 @@
 #define S_LOOP_H
 
 #include <math.h>
+#ifndef _WIN32
 #include <sys/time.h>
 #include <sys/select.h>
+#else
+#include <winsock2.h>
+#endif
 #include <stdlib.h> 
 #include <stdio.h> 
 
