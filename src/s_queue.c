@@ -28,6 +28,7 @@ int s_queue_destroy(struct s_queue *queue_d)
 		return -1;
 	
 	free(queue_d);
+	return 0;
 }
 
 int s_queue_is_empty(struct s_queue *queue_d)

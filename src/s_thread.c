@@ -34,7 +34,7 @@ static UINT __stdcall internal_thread_start(void* arg)
 static void* internal_thread_start(void *arg)
 #endif
 {
-  struct thread_info *info;
+  struct thread_info *info = arg;
 
   info->cb(info->data);
   free(info);

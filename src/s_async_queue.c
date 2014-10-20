@@ -205,7 +205,7 @@ void * s_async_queue_try_pull(async_t * async_d)
 	if(empty==1)
 	{
 		printf("async_queue empty !! \n");
-		return -1;
+		return NULL;
 	}
 
 	item=s_queue_pull(async_d->queue_d);

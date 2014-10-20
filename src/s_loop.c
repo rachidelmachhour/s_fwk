@@ -9,6 +9,12 @@
  *
  */
 
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+
+
 #include "s_loop.h"
 
 void sloop_destroy_table(struct sloop_table *table);
@@ -46,7 +52,8 @@ int sloop_timer_new(sloop_t *sloop_d,int msec, sloop_callback_timer handler, voi
 
 int sloop_set_timeout(sloop_t *sloop_d, long msec)
 {
-    	sloop_d->timeout.tv_usec=msec*1000;
+    sloop_d->timeout.tv_usec=msec*1000;
+	return 0;
 }
 
 /* sloop_mode must be SLOOP_RD or SLOOP_WR or SLOOP_EXCEPT */
@@ -150,6 +157,7 @@ int sloop_remove_fd(sloop_t *sloop_d,sloop_mode mode, int fd)
 	}
 	table->num_fd--;
 	table->changed = 1;
+	return 0;
 }
 
 int sloop_remove_timer(sloop_t *sloop_d, int id)
