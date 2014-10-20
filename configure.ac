@@ -2,9 +2,9 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT(s_fwk],[0.1],[opensource@spartsystems.com],[s_fwk],[http://github;com/spartsystems/s_fwk])
-AC_CONFIG_SRCDIR(src/sloop.c)
-AC_CONFIG_MACRO_DIR([m4])
+AC_INIT([s_fwk],[0.1],[opensource@spartsystems.com],[s_fwk],[http://github;com/spartsystems/s_fwk])
+
+AC_CONFIG_SRCDIR(src/s_loop.c)
 
 ## ------------------------ ##
 ## Automake Initialisation. ##
