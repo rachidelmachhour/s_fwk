@@ -217,7 +217,7 @@ int s_sem_trywait(s_sem_t* sem) {
 
 int s_cond_init(s_cond_t* cond) {
 #ifdef _WIN32
-
+  InitializeConditionVariable(cond);
 	return 0;
 #else
   	pthread_condattr_t attr;
@@ -259,7 +259,7 @@ void s_cond_destroy(s_cond_t* cond) {
 
 void s_cond_signal(s_cond_t* cond) {
 #ifdef _WIN32
-
+    WakeConditionVariable(cond);
 #else
   	pthread_cond_signal(cond);
 #endif
@@ -267,7 +267,7 @@ void s_cond_signal(s_cond_t* cond) {
 
 void s_cond_broadcast(s_cond_t* cond) {
 #ifdef _WIN32
-
+    WakeAllConditionVariable(cond);
 #else
   	pthread_cond_broadcast(cond);
 #endif
@@ -276,7 +276,7 @@ void s_cond_broadcast(s_cond_t* cond) {
 
 void s_cond_wait(s_cond_t* cond, s_mutex_t* mutex) {
 #ifdef _WIN32
-
+  SleepConditionVariableCS(cond, mutex, INFINITE);
 #else
 	pthread_cond_wait(cond, mutex);
 #endif    
@@ -284,7 +284,7 @@ void s_cond_wait(s_cond_t* cond, s_mutex_t* mutex) {
 
 int s_cond_timedwait(s_cond_t* cond, s_mutex_t* mutex, uint64_t timeout) {
 #ifdef _WIN32
-
+    SleepConditionVariableCS(cond, mutex, (unsigned long)timeout);
 	return 0;
 #else
   	int r;

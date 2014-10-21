@@ -12,6 +12,7 @@
 #include <process.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <stdio.h>
 #else
 #include <stdlib.h>
 #include <stdint.h>
@@ -26,7 +27,13 @@
 
 
 #ifdef _WIN32 
-typedef int s_cond_t;  /* to define real type, juste */
+#if HAVE_CONDITION_VARIABLE_PTR
+typedef CONDITION_VARIABLE s_cond_t;
+#else
+ typedef struct s_cond_t {
+    void *Ptr;
+} s_cond_t;
+#endif
 typedef HANDLE s_thread_t;
 typedef HANDLE s_sem_t;
 typedef CRITICAL_SECTION s_mutex_t;
@@ -36,13 +43,6 @@ typedef pthread_mutex_t s_mutex_t;
 typedef sem_t s_sem_t;
 typedef pthread_cond_t s_cond_t;
 #endif
-
-
-
-
-
-
-
 
 
 #endif
