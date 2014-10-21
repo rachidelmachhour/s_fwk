@@ -18,6 +18,8 @@
 
 #include "s_thread.h"
 
+
+#ifdef _WIN32
 typedef VOID (WINAPI* sInitializeConditionVariable) 
 			 (PCONDITION_VARIABLE ConditionVariable);
 
@@ -70,6 +72,7 @@ static void s_thread_cond_init()
 	}
 	
 }
+#endif
 
 
 #undef NANOSEC
