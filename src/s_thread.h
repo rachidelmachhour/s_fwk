@@ -22,9 +22,11 @@
 #include <sys/time.h>
 #endif
 
+#include "s_type.h"
 
 
 #ifdef _WIN32 
+typedef int s_cond_t;  /* to define real type, juste */
 typedef HANDLE s_thread_t;
 typedef HANDLE s_sem_t;
 typedef CRITICAL_SECTION s_mutex_t;

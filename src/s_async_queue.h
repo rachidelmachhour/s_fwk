@@ -1,10 +1,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 #include <sys/time.h>
 #include "s_queue.h"
 #include <stdint.h>
-#include "s_thread.h"
 
 #ifndef S_ASYNC_QUEUE_H
 #define S_ASYNC_QUEUE_H
@@ -15,9 +15,9 @@ typedef void (*async_callback_print)(void *user_data);
 
 struct s_async_queue {
 	struct s_queue *queue_d;
-	s_mutex_t mutex;
-	s_cond_t  cond_wait_full;
-	s_cond_t  cond_wait_empty;
+	pthread_mutex_t mutex;
+	pthread_cond_t  cond_wait_full;
+	pthread_cond_t  cond_wait_empty;
 	async_callback_timer time_func;
 	int time_custom;
 	int nb_byte;
@@ -26,7 +26,6 @@ struct s_async_queue {
 	int packet_limit;
 	uint64_t time_us;
 	uint64_t time_last;
-	uint64_t timestamp[2048];
 	uint64_t time_limit;
 };
 

@@ -13,9 +13,9 @@ async_t * new_async_queue()
 	async_d->nb_byte=0;
 	async_d->nb_packet=0;
 	async_d->time_us=0;
-	s_mutex_init(&async_d->mutex);
-	s_cond_init(&async_d->cond_wait_full);
-	s_cond_init(&async_d->cond_wait_empty);
+	pthread_mutex_init(&async_d->mutex,NULL);
+	pthread_cond_init(&async_d->cond_wait_full,NULL);
+	pthread_cond_init(&async_d->cond_wait_empty,NULL);
 	return async_d;
 }
 
@@ -62,7 +62,7 @@ uint64_t s_async_queue_get_time_level(async_t * async_d)
 int s_async_queue_full(async_t * async_d,int nb_byte,int nb_packet,uint64_t time_us)
 {
 	int full=0;
-	if(async_d->time_limit!=0)
+	/*if(async_d->time_limit!=0)
 	{
 		if(async_d->time_us <= async_d->time_limit)
 			full=0;
@@ -71,7 +71,7 @@ int s_async_queue_full(async_t * async_d,int nb_byte,int nb_packet,uint64_t time
 			full=1;
 			return full;
 		}
-	}
+	}*/
 	if(async_d->packet_limit!=0)
 	{
 		if(async_d->nb_packet <= async_d->packet_limit)
@@ -101,8 +101,7 @@ int s_async_queue_try_push(async_t * async_d, void * item)
 	uint64_t now;
 	struct timeval tv;
 	int empty=0;
-	int len;
-	s_mutex_lock(&async_d->mutex);
+	pthread_mutex_lock(&async_d->mutex);
 
 	empty=s_queue_is_empty(async_d->queue_d);
 
@@ -122,7 +121,6 @@ int s_async_queue_try_push(async_t * async_d, void * item)
 	}
 	else
 	{
-		len=s_queue_get_length(async_d->queue_d);
 		async_d->time_us=now-async_d->time_last;
 		async_d->time_last=now;
 	}
@@ -138,10 +136,10 @@ int s_async_queue_try_push(async_t * async_d, void * item)
 
 	if(empty==1)
 	{
-		s_cond_signal(&async_d->cond_wait_empty);
+		pthread_cond_signal(&async_d->cond_wait_empty);
 	}
 
-	s_mutex_unlock(&async_d->mutex);
+	pthread_mutex_unlock(&async_d->mutex);
 	return ret;
 }
 
@@ -151,8 +149,7 @@ int s_async_queue_push(async_t * async_d, void * item)
 	uint64_t now;
 	struct timeval tv;
 	int empty=0;
-	int len=0;
-	s_mutex_lock(&async_d->mutex);
+	pthread_mutex_lock(&async_d->mutex);
 
 	empty=s_queue_is_empty(async_d->queue_d);
 
@@ -169,13 +166,10 @@ int s_async_queue_push(async_t * async_d, void * item)
 	{
 		async_d->time_us=0;
 		async_d->time_last=now;
-		async_d->timestamp[0]=0;
 	}
 	else
 	{
-		len=s_queue_get_length(async_d->queue_d);
-		async_d->timestamp[len]=now-async_d->time_last;
-		async_d->time_us+=async_d->timestamp[len];
+		async_d->time_us=now-async_d->time_last;
 		async_d->time_last=now;
 	}
 
@@ -183,16 +177,16 @@ int s_async_queue_push(async_t * async_d, void * item)
 	async_d->nb_byte+=sizeof(item);
 
 	while(s_async_queue_full(async_d,async_d->nb_byte,async_d->nb_packet,now)!=0)
-		s_cond_wait(&async_d->cond_wait_full,&async_d->mutex);
+		pthread_cond_wait(&async_d->cond_wait_full,&async_d->mutex);
 
 	ret=s_queue_push(async_d->queue_d,item);
 
 	if(empty==1)
 	{
-		s_cond_signal(&async_d->cond_wait_empty);
+		pthread_cond_signal(&async_d->cond_wait_empty);
 	}
 
-	s_mutex_unlock(&async_d->mutex);
+	pthread_mutex_unlock(&async_d->mutex);
 	return ret;
 }
 
@@ -201,8 +195,7 @@ void * s_async_queue_try_pull(async_t * async_d)
 {
 	void *item;
 	int empty=0,full=0;
-	int len=0;
-	s_mutex_lock(&async_d->mutex);
+	pthread_mutex_lock(&async_d->mutex);
 	
 	if(s_async_queue_full(async_d,async_d->nb_byte,async_d->nb_packet,async_d->time_us)==1)
 		full=1;
@@ -217,16 +210,13 @@ void * s_async_queue_try_pull(async_t * async_d)
 
 	item=s_queue_pull(async_d->queue_d);
 
-	len=s_queue_get_length(async_d->queue_d);
-
 	async_d->nb_packet--;
 	async_d->nb_byte-=sizeof(item);
-	async_d->time_us=async_d->time_last;
 
 	if(full==1)
-		s_cond_signal(&async_d->cond_wait_full);
+		pthread_cond_signal(&async_d->cond_wait_full);
 
-	s_mutex_unlock(&async_d->mutex);
+	pthread_mutex_unlock(&async_d->mutex);
 	return item;
 }
 
@@ -235,11 +225,7 @@ void * s_async_queue_pull(async_t * async_d)
 {
 	void *item;
 	int empty=0,full=0;
-	int len=0;
-	struct timeval tv;
-	uint64_t now;
-	
-	s_mutex_lock(&async_d->mutex);
+	pthread_mutex_lock(&async_d->mutex);
 	
 	if(s_async_queue_full(async_d,async_d->nb_byte,async_d->nb_packet,async_d->time_us)==1)
 		full=1;
@@ -248,32 +234,18 @@ void * s_async_queue_pull(async_t * async_d)
 
 	if(empty==1)
 	{
-		s_cond_wait(&async_d->cond_wait_empty,&async_d->mutex);
+		pthread_cond_wait(&async_d->cond_wait_empty,&async_d->mutex);
 	}
 
 	item=s_queue_pull(async_d->queue_d);
 
-	len=s_queue_get_length(async_d->queue_d);
-
 	async_d->nb_packet--;
-	async_d->nb_byte-=sizeof(item);	
-	async_d->time_us=async_d->time_us-async_d->timestamp[len];
-
-	if(async_d->time_custom==1)
-		now=async_d->time_func();
-	else
-	{
-		if(gettimeofday(&tv,NULL)==-1)
-			return NULL;
-		now = tv.tv_sec*1000000 + tv.tv_usec;
-	}
-
-	async_d->time_last=now;
+	async_d->nb_byte-=sizeof(item);
 
 	if(full==1)
-		s_cond_signal(&async_d->cond_wait_full);
+		pthread_cond_signal(&async_d->cond_wait_full);
 
-	s_mutex_unlock(&async_d->mutex);
+	pthread_mutex_unlock(&async_d->mutex);
 	return item;
 }
 
