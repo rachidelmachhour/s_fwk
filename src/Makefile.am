@@ -15,7 +15,10 @@ if !WINNT
 libs_fwk_la_SOURCES += s_async_queue.c
 endif
 libs_fwk_la_LDFLAGS =   -no-undefined -version-info 1:0:0
-libs_fwk_la_CFLAGS = $(AM_CFLAGS) 
+libs_fwk_la_CFLAGS = $(AM_CFLAGS)
+if WINNT
+libs_fwk_la_CFLAGS += -D_WIN32_WINNT=0x0600 
+endif
 
 if WINNT
 libs_fwk_la_LDFLAGS += -lws2_32  

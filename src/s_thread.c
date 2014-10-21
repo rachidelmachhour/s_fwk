@@ -2,13 +2,13 @@
 #include <assert.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <winsock2.h>
 #include <mswsock.h>
 #include <ws2tcpip.h>
 #include <windows.h>
 #include <process.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <sys/locking.h>
 #else
 #include <pthread.h>
 #include <assert.h>
@@ -18,6 +18,60 @@
 
 #include "s_thread.h"
 
+typedef VOID (WINAPI* sInitializeConditionVariable) 
+			 (PCONDITION_VARIABLE ConditionVariable);
+
+typedef BOOL (WINAPI* sSleepConditionVariableCS)
+             (PCONDITION_VARIABLE ConditionVariable,
+              PCRITICAL_SECTION CriticalSection,
+              DWORD dwMilliseconds);
+
+typedef BOOL (WINAPI* sSleepConditionVariableSRW)
+             (PCONDITION_VARIABLE ConditionVariable,
+              PSRWLOCK SRWLock,
+              DWORD dwMilliseconds,
+              ULONG Flags);
+
+typedef VOID (WINAPI* sWakeAllConditionVariable)
+             (PCONDITION_VARIABLE ConditionVariable);
+
+typedef VOID (WINAPI* sWakeConditionVariable)
+             (PCONDITION_VARIABLE ConditionVariable);
+
+
+static sInitializeConditionVariable InitializeConditionVariable_fn = NULL;
+static sSleepConditionVariableCS    SleepConditionVariableCS_fn = NULL;
+static sWakeAllConditionVariable    WakeAllConditionVariable_fn =NULL;
+static sWakeConditionVariable       WakeConditionVariable_fn = NULL;
+
+static unsigned char ConditionInit = 0;
+
+static void s_thread_cond_init()
+{
+    HANDLE lib;
+
+    lib = GetModuleHandle(TEXT("kernel32.dll"));
+    if (lib == NULL)
+        return;
+
+
+
+    InitializeConditionVariable_fn = (sInitializeConditionVariable) GetProcAddress(lib, "InitializeConditionVariable");
+    SleepConditionVariableCS_fn    = (sSleepConditionVariableCS) GetProcAddress(lib, "SleepConditionVariableCS");
+    WakeAllConditionVariable_fn    = (sWakeAllConditionVariable) GetProcAddress(lib, "WakeAllConditionVariable");
+    WakeConditionVariable_fn       = (sWakeConditionVariable) GetProcAddress(lib, "WakeConditionVariable");
+
+   	if(InitializeConditionVariable_fn && SleepConditionVariableCS_fn &&
+        WakeAllConditionVariable_fn && WakeConditionVariable_fn){
+		ConditionInit = 1;
+	}
+	else{
+		printf("ERROR to initialize variable condition");
+	}
+	
+}
+
+
 #undef NANOSEC
 #define NANOSEC ((uint64_t) 1e9)
 
@@ -26,7 +80,6 @@ struct thread_info {
   void (*cb)(void* arg);
   void* data;
 };
-
 
 #ifdef _WIN32
 static UINT __stdcall internal_thread_start(void* arg)
@@ -41,6 +94,8 @@ static void* internal_thread_start(void *arg)
 
   return 0;
 }
+
+
 
 
 
@@ -217,7 +272,9 @@ int s_sem_trywait(s_sem_t* sem) {
 
 int s_cond_init(s_cond_t* cond) {
 #ifdef _WIN32
-  InitializeConditionVariable(cond);
+	if(ConditionInit == 0) /* initial condtion var func once */
+		s_thread_cond_init();
+  	InitializeConditionVariable_fn(*cond);
 	return 0;
 #else
   	pthread_condattr_t attr;
@@ -259,7 +316,7 @@ void s_cond_destroy(s_cond_t* cond) {
 
 void s_cond_signal(s_cond_t* cond) {
 #ifdef _WIN32
-    WakeConditionVariable(cond);
+    WakeConditionVariable_fn(cond);
 #else
   	pthread_cond_signal(cond);
 #endif
@@ -267,7 +324,7 @@ void s_cond_signal(s_cond_t* cond) {
 
 void s_cond_broadcast(s_cond_t* cond) {
 #ifdef _WIN32
-    WakeAllConditionVariable(cond);
+    WakeAllConditionVariable_fn(cond);
 #else
   	pthread_cond_broadcast(cond);
 #endif
@@ -276,7 +333,7 @@ void s_cond_broadcast(s_cond_t* cond) {
 
 void s_cond_wait(s_cond_t* cond, s_mutex_t* mutex) {
 #ifdef _WIN32
-  SleepConditionVariableCS(cond, mutex, INFINITE);
+  SleepConditionVariableCS_fn(cond, mutex, INFINITE);
 #else
 	pthread_cond_wait(cond, mutex);
 #endif    
@@ -284,7 +341,7 @@ void s_cond_wait(s_cond_t* cond, s_mutex_t* mutex) {
 
 int s_cond_timedwait(s_cond_t* cond, s_mutex_t* mutex, uint64_t timeout) {
 #ifdef _WIN32
-    SleepConditionVariableCS(cond, mutex, (unsigned long)timeout);
+    SleepConditionVariableCS_fn(cond, mutex, (unsigned long)timeout);
 	return 0;
 #else
   	int r;

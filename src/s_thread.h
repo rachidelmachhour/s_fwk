@@ -27,9 +27,8 @@
 
 
 #ifdef _WIN32 
-#if HAVE_CONDITION_VARIABLE_PTR
 typedef CONDITION_VARIABLE s_cond_t;
-#else
+#if 0
  typedef struct s_cond_t {
     void *Ptr;
 } s_cond_t;
