@@ -13,7 +13,11 @@ int clients[MAX_CLIENTS];
 
 void myfunc(int fd, void *user_data)
 {
+	s_socket_set_non_block(fd);
+
 	printf("client appellé !! \n \n");
+
+	tcp_recv(fd,message,255,0);
 
 	tcp_recv(fd,message,255,0);
 

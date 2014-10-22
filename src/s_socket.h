@@ -91,6 +91,7 @@ typedef struct ssocket_data ssocket_t;
 
 typedef struct info_socket info_t;
 
+typedef int s_sock_t;
 
 /**
  * \fn info_t * info_init();
@@ -360,5 +361,8 @@ int s_socket_tcp_send_msg(char *ip, int port,char *message);
  * \return 0 on success or -1 when error occurs.
  */
 int s_socket_tcp_recv_msg(int port, int time_sec, char *message);
+
+int s_socket_set_non_block(int sock);
+
 
 #endif 

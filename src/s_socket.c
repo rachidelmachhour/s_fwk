@@ -290,3 +290,18 @@ int s_socket_get_sock_opt(ssocket_t *socket_s, int level, int option_name,void *
 
 }
 
+int s_socket_set_non_block(int sock)
+{
+	int ret;
+	int flags = fcntl(sock, F_GETFL);
+	if (flags < 0)
+			flags = O_NONBLOCK;
+		else
+			flags |= O_NONBLOCK;
+	ret = fcntl(sock, F_SETFL, flags);
+	if (ret == -1) {
+		close(sock);
+		return -1;
+	}
+}
+
