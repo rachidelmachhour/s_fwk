@@ -114,10 +114,16 @@ int udp_srv_get_socket_fd(udpsrv_t *srv)
 int udp_server_recv(udpsrv_t *srv, unsigned char *buf,int len, struct udpcli_info *cli_info)
 {
 	info_t * info_s;
+	int ret;
 	ssocket_t *socket_s;
 	socket_s=srv->socket_d;
     info_s=info_init();
-	return s_socket_recvfrom(socket_s, buf, len, 0, info_s);
+	ret = s_socket_recvfrom(socket_s, buf, len, 0, info_s);
+	if(ret == -1)
+		return -1;
+	cli_info->ip = inet_ntoa(info_s->address.sin_addr);
+	cli_info->port = ntohs(info_s->address.sin_port);
+	return 0;
 }
 
 int udp_server_responseto(udpsrv_t *srv,unsigned char *buf,int len, struct udpcli_info *cli_info)
@@ -129,9 +135,8 @@ int udp_server_responseto(udpsrv_t *srv,unsigned char *buf,int len, struct udpcl
     info_s=info_init();
     socket_s=srv->socket_d;
 	s_socket_addr_info(socket_srv,inet_addr(cli_info->ip),cli_info->port);
-	info_s->address.sin_family=socket_srv->address.sin_family;
-	info_s->address.sin_addr.s_addr=socket_srv->address.sin_addr.s_addr;
-	info_s->address.sin_port=socket_srv->address.sin_port;
+	info_s->address = socket_srv->address;
+	info_s->address_len = socket_srv->address_len;
 
 	return s_socket_sendto(socket_s, buf, len, 0, info_s);
 
