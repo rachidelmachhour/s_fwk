@@ -19,6 +19,11 @@ struct udpcli_info * udpcli_info_init()
 	return cli_info;
 }
 
+int udpcli_info_destroy(struct udpcli_info *info)
+{
+	free(info);
+}
+
 udpcli_t * new_udp_client()
 {
 	udpcli_t * cli;
