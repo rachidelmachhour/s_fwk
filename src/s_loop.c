@@ -46,9 +46,17 @@ int sloop_timer_new(sloop_t *sloop_d,int msec, sloop_callback_timer handler, voi
 {
 	int id=0;
    id=sloop_add_timer(sloop_d,msec,handler,user_data);
+   sloop_d->periodic_timer=1;
    return id;
 }
 
+int sloop_timer_once_new(sloop_t *sloop_d,int msec, sloop_callback_timer handler, void *user_data )
+{
+	int id=0;
+   id=sloop_add_timer(sloop_d,msec,handler,user_data);
+   sloop_d->periodic_timer=0;
+   return id;
+}
 
 int sloop_set_timeout(sloop_t *sloop_d, long msec)
 {
@@ -285,9 +293,10 @@ void sloop_run_step(sloop_t *sloop_d)
 
 void sloop_run(sloop_t *sloop_d)
 {
+	double actual_time[sloop_d->timer_d.num_timer],first_time[sloop_d->timer_d.num_timer];
 	fd_set *readfds, *writefds, *exceptfds;
 	struct timeval timeout;
-	int res,i;
+	int res,i,periodic=1;
 
 	readfds = malloc(sizeof(*readfds));
 	writefds = malloc(sizeof(*writefds));
@@ -301,6 +310,14 @@ void sloop_run(sloop_t *sloop_d)
 	}
 	timeout.tv_sec=0;
 	timeout.tv_usec=500000;
+
+	if(sloop_d->timer_d.num_timer!=0)
+	{
+    	for(i=0;i<sloop_d->timer_d.num_timer;i++)
+			{
+    			first_time[i]=(double)time(NULL);
+			}
+	}
     
 	while(!sloop_d->finished)
 	{
@@ -318,22 +335,19 @@ void sloop_run(sloop_t *sloop_d)
 		sloop_table_call_handler(&sloop_d->exceptfds, exceptfds);
 	}	/* check timer */
     
-    if(sloop_d->timer_d.num_timer!=0){
+    if(sloop_d->timer_d.num_timer!=0 && periodic){
 
-    	double actual_time[sloop_d->timer_d.num_timer],first_time[sloop_d->timer_d.num_timer];
-
-		for(i=0;i<sloop_d->timer_d.num_timer;i++)
-			{
-    			first_time[i]=(double)time(NULL);
-			}
-
-		for(i=0;i<sloop_d->timer_d.num_timer;i++)
+    	for(i=0;i<sloop_d->timer_d.num_timer;i++)
 		{
-						actual_time[i]=(double)time(NULL);
-			if(sloop_d->timer_d.timer[i].time_w<(actual_time[i]-first_time[i]))
+				actual_time[i]=(double)time(NULL);
+			if(sloop_d->timer_d.timer[i].time_w<(double)((actual_time[i]-first_time[i])*1000))
 			{
 				sloop_d->timer_d.timer[i].handler(sloop_d->timer_d.timer[i].user_data);
 				first_time[i]=(double)time(NULL);
+				if(sloop_d->periodic_timer == 0)
+				{
+					periodic=0;
+				}
 			}
 		}
 	}

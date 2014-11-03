@@ -21,6 +21,8 @@
 #endif
 #include <stdlib.h> 
 #include <stdio.h> 
+#include <stdint.h>
+#include "s_type.h"
 
 typedef void (*sloop_callback_handler)(int fd, void *user_data);
 
@@ -130,6 +132,7 @@ struct sloop_data
 	struct timeval timeout;
    int finished;
    struct sloop_table_timer timer_d;
+   int periodic_timer;
 };
 
 
