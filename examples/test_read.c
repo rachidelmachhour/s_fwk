@@ -10,7 +10,6 @@ int main()
 	unsigned char buf[4096];
 	char * comport="/dev/ttyUSB0";
 	char mode[]={'8','N','1',0};
-	char  str[2][1000];
 
 
 
@@ -38,7 +37,7 @@ int main()
 
       printf("received %i bytes: %s\n", n, (char *)buf);
     }
-
+    usleep(100000);
 
   }
 
