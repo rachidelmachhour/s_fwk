@@ -41,10 +41,10 @@ int s_serial_set_comport(s_serial_t * s_serial,unsigned char *comport)
 
 int s_serial_set_mode(s_serial_t * s_serial,unsigned char * mode)
 {
-  if(strlen(mode) != 3)
-  {
-    printf("invalid mode \"%s\"\n", mode);
-    return(1);
+	if(strlen(mode) != 3)
+  	{
+  		printf("invalid mode \"%s\"\n", mode);
+    	return(1);
   }
 
   switch(mode[0])
@@ -272,7 +272,6 @@ int s_serial_set_baudr(s_serial_t * s_serial,int  baudrate)
 
 int s_serial_set_baudrate(s_serial_t * s_serial,int  baudrate)
 {
-	
 	s_serial_set_baudr(s_serial,baudrate);
 
 	cfsetispeed(&s_serial->settings, s_serial->baudr);
@@ -405,8 +404,8 @@ int s_serial_open(s_serial_t * s_serial,unsigned char *comport,int baudr,unsigne
 	s_serial->fd = open(s_serial->comport, O_RDWR | O_NOCTTY | O_NDELAY);
   	if(s_serial->fd==-1)
   	{
-    perror("unable to open comport ");
-    return(0);
+  		perror("unable to open comport ");
+    	return(0);
   	}
 
  	s_serial_set_settings(s_serial);
@@ -427,9 +426,9 @@ void s_serial_close(s_serial_t * s_serial)
 
 int s_serial_write_byte(s_serial_t * s_serial, unsigned unsigned char byte)
 {
-  int n;
-  n = write(s_serial->fd, &byte, 1);
-  if(n<0)  return(1);
+	int n;
+  	n = write(s_serial->fd, &byte, 1);
+ 	if(n<0)  return(1);
 
   return(0);
 }
@@ -440,7 +439,7 @@ int s_serial_write_byte(s_serial_t * s_serial, unsigned unsigned char byte)
 int s_serial_write(s_serial_t *s_serial, const unsigned char *text)  /* sends a string to serial port */
 {
 	int nb=0;
-  while(*text != 0)   nb+=s_serial_write_byte(s_serial, *(text++));
+  	while(*text != 0)   nb+=s_serial_write_byte(s_serial, *(text++));
   return nb;
 }
 
@@ -457,86 +456,3 @@ int s_serial_read(s_serial_t * s_serial, unsigned unsigned char *buf, int size)
   return(n);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// int main() 
-// {
-// 	s_serial_t *s;
-// 	int baudr=115200,n,i;
-// 	unsigned unsigned char buf[4096];
-// 	unsigned char * comport="/dev/ttyUSB0";
-// 	unsigned char mode[]={'8','N','1',0};
-// 	unsigned char  str[2][512];
-
-//   	strcpy(str[0], "The quick brown fox jumped over the lazy grey dog.\n");
-
-//   	strcpy(str[1], "Happy serial programming!.\n");
-
-
-
-// 	s=s_serial_new();
-
-// 	s_serial_open(s,comport,baudr,mode);
-// 	//s_serial_read(s,)
-// 	  while(1)
-// 	{
-// 	    n = s_serial_read(s, buf, 4095);
-
-//     if(n > 0)
-//     {
-//       buf[n] = 0;   /* always put a "null" at the end of a string! */
-
-//       for(i=0; i < n; i++)
-//       {
-//         if(buf[i] < 32)  /* replace unreadable control-codes by dots */
-//         {
-//           buf[i] = '.';
-//         }
-//       }
-
-//       printf("received %i bytes: %s\n", n, (unsigned char *)buf);
-//     }
-
-// 		#ifdef _WIN32
-//     Sleep(100);
-// 		#else
-//     usleep(100000);  /* sleep for 100 milliSeconds */
-// 		#endif
-// 	  }
-
-
-// 	printf("%d\n",s->baudr );
-//     return 0;
-// }
