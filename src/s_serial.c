@@ -24,7 +24,7 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
    	{
 	    case 1  :   s_serial->settings.StopBits=ONESTOPBIT; 
 				    break;
-	    case 1.5  :   s_serial->settings.StopBits=ONE5STOPBITS; 
+	    case 1.5:   s_serial->settings.StopBits=ONE5STOPBITS; 
 				    break;
 		case 2  :	s_serial->settings.StopBits=TWOSTOPBITS;
 			        break;
@@ -55,7 +55,7 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
 	    default :   printf("invalid number of stop bits '%d'\n", nb_stop_bits);
 	    			printf("try : \n 1 : One stop bit \n 2 : Two stop bits \n");
 	                return(0);
-    }
+	}
 
 	if(tcsetattr(s_serial->fd, TCSANOW, &s_serial->settings)==-1)
  	{
@@ -65,12 +65,14 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
  	}
 
     #endif
+
   return 1;
 }
 
 int	s_serial_set_parity_type(s_serial_t * s_serial, char parity_type)
 {
 	#ifdef _WIN32
+
 	switch(parity_type)
   	{
     	case 'N':
@@ -92,6 +94,7 @@ int	s_serial_set_parity_type(s_serial_t * s_serial, char parity_type)
 		printf("unable to set_parity_type\n");
 	}
 	#else
+
 	switch(parity_type)
   	{
 	    case 'N':
@@ -107,10 +110,12 @@ int	s_serial_set_parity_type(s_serial_t * s_serial, char parity_type)
 	    case 'o':	s_serial->settings.c_cflag = (PARENB | PARODD);
 	    			s_serial->mode->cpar = (PARENB | PARODD);
 	             	break;
-	    default :	printf("invalid parity '%c'\n", parity_type);
+				
+		default :	printf("invalid parity '%c'\n", parity_type);
 	    			printf("try : \n N : No parity \n E :  Parity Enable \n O : Odd Parity \n");
 	             	return(0);
   	}
+
 	if(tcsetattr(s_serial->fd, TCSANOW, &s_serial->settings)==-1)
  	{
  	  close(s_serial->fd);
@@ -118,12 +123,14 @@ int	s_serial_set_parity_type(s_serial_t * s_serial, char parity_type)
  	  return(0);
  	} 
  	#endif
+
   return 1;
 }
 
 int	s_serial_set_caractere_size(s_serial_t * s_serial,int  char_size)
 {
 	#ifdef _WIN32
+
 	switch(char_size)
 	{
 	    case  8: s_serial->settings.ByteSize=char_size;
@@ -145,6 +152,7 @@ int	s_serial_set_caractere_size(s_serial_t * s_serial,int  char_size)
 		printf("unable to set_caractere_size\n");
 	}
 	#else
+
 	switch(char_size)
 	{
 	    case  8 : s_serial->settings.c_cflag &= ~CSIZE;
@@ -174,7 +182,9 @@ int	s_serial_set_caractere_size(s_serial_t * s_serial,int  char_size)
  	  perror("unable to set_caractere_size \n");
  	  return(0);
  	} 	
+
  	#endif
+
   return 1;
 }
 
@@ -262,13 +272,16 @@ int s_serial_set_baudrate(s_serial_t * s_serial,int  baudrate)
 
 	cfsetispeed(&s_serial->settings, s_serial->baudr);
 	cfsetospeed(&s_serial->settings, s_serial->baudr);
+
 	if(tcsetattr(s_serial->fd, TCSANOW, &s_serial->settings)==-1)
  	{
  	  close(s_serial->fd);
  	  perror("unable to adjust portsettings ");
  	  return(0);
  	}
+
  	#endif
+
  return 1;
 }
 
@@ -278,6 +291,7 @@ int	s_serial_set_settings_default(s_serial_t* s_serial)
 	memset(&s_serial->settings, 0, sizeof(s_serial->settings)); 
 
 	#ifdef _WIN32
+	
 	strcpy(s_serial->mode,"baud=115200");
 	strcat(s_serial->mode," data=8");
 	strcat(s_serial->mode," parity=n");
@@ -286,16 +300,16 @@ int	s_serial_set_settings_default(s_serial_t* s_serial)
 
 	if(!BuildCommDCBA(s_serial->mode, &s_serial->settings))
   	{
-    printf("unable to set comport dcb settings\n");
-    CloseHandle(s_serial->fd);
-    return(0);
+	    printf("unable to set comport dcb settings\n");
+	    CloseHandle(s_serial->fd);
+	    return(0);
   	}
 
   	if(!SetCommState(s_serial->fd, &s_serial->settings))
   	{
-    printf("unable to set comport cfg settings\n");
-    CloseHandle(s_serial->fd);
-    return(0);
+	    printf("unable to set comport cfg settings\n");
+	    CloseHandle(s_serial->fd);
+	    return(0);
  	}
 
   	s_serial->Cptimeouts.ReadIntervalTimeout         = MAXDWORD;
@@ -306,9 +320,9 @@ int	s_serial_set_settings_default(s_serial_t* s_serial)
 
   	if(!SetCommTimeouts(s_serial->fd, &s_serial->Cptimeouts))
   	{
-    printf("unable to set port time-out settings\n");
-    CloseHandle(s_serial->fd);
-    return(0);
+	    printf("unable to set port time-out settings\n");
+	    CloseHandle(s_serial->fd);
+	    return(0);
   	}	
 
 	#else /** LINUX */
