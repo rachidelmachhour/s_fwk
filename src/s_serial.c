@@ -22,16 +22,16 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
 
 	switch(nb_stop_bits)
    	{
-	    case 1  :   s_serial->settings.StopBits=ONESTOPBIT; 
-				    break;
-	    case 1.5:   s_serial->settings.StopBits=ONE5STOPBITS; 
+	    case 1  :   s_serial->settings.StopBits=ONESTOPBIT;
+					break;
+		case 1.5:   s_serial->settings.StopBits=ONE5STOPBITS; 
 				    break;
 		case 2  :	s_serial->settings.StopBits=TWOSTOPBITS;
 			        break;
 	    default :   printf("invalid number of stop bits '%d'\n", nb_stop_bits);
 	    			printf("try : \n 1 : One stop bit. \n 1.5 : 1.5 stop bits. \n 2 : Two stop bits. \n")
 	                return(0);
-    }
+	}
 	
 	if(SetCommState(s_serial->fd, &s_serial->settings)==0)
 	{
@@ -291,7 +291,7 @@ int	s_serial_set_settings_default(s_serial_t* s_serial)
 	memset(&s_serial->settings, 0, sizeof(s_serial->settings)); 
 
 	#ifdef _WIN32
-	
+
 	strcpy(s_serial->mode,"baud=115200");
 	strcat(s_serial->mode," data=8");
 	strcat(s_serial->mode," parity=n");
