@@ -35,12 +35,12 @@ int main(int argc, char * argv [])
     	printf("sent: %s\n", str[i]);
 
     	//s_serial_set_baudr(s,9600);
-	    #ifdef _WIN32
+	#ifdef _WIN32
      	Sleep(1000);
-   		#else
-   		usleep(1000000);  /* sleep for 1 Second */
-   		#endif
-   		i++;
+   	#else
+	usleep(1000000);  /* sleep for 1 Second */
+   	#endif
+   	i++;
 
     	i %= 2;
   	}
