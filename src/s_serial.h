@@ -44,19 +44,18 @@ struct s_serial_data
 {
 	
 	#ifdef _WIN32
-    HANDLE *fd;
-    DCB settings;
-    char mode[500];
-    COMMTIMEOUTS Cptimeouts;
+    	HANDLE *fd;
+	DCB settings;
+    	char mode[500];
+    	COMMTIMEOUTS Cptimeouts;
 	#else
-    struct termios settings;
+    	struct termios settings;
    	int fd;
    	s_serial_m * mode;
 	#endif
 	char *comport;
 	int baudr;
 	int status;
-	
 };
 
 typedef struct s_serial_data s_serial_t;
