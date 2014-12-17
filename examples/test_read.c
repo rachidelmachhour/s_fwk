@@ -3,25 +3,29 @@
 #include "s_serial.h"
 
 
-int main() 
+int main(int argc, char * argv []) 
 {
 	s_serial_t *s;
-	int baudr=115200,n,i;
-	unsigned char buf[4096];
-	char * comport="/dev/ttyUSB0";
-	char mode[]={'8','N','1',0};
-
+	int baudr=9600,n,i;
+  char buf[4096];
+  printf("%s\n",argv[1] );
+  char * comport=argv[1];
+  
 
 
 	s=s_serial_new();
-	if(s_serial_open(s,comport,baudr,mode)==0)
+
+
+	if(s_serial_open(s,comport)==0)
 	{
-		printf("Error Open Port\n");
+	 return 0;
 	}
-	
+
+	s_serial_set_baudrate(s,baudr);
 
 	  while(1)
- 	 {
+ 	 {        
+
   		 n = s_serial_read(s, buf, 4095);
    		if(n > 0)
     		{
@@ -37,7 +41,11 @@ int main()
 
       printf("received %i bytes: %s\n", n, (char *)buf);
     }
-    usleep(100000);
+    #ifdef _WIN32
+      Sleep(1000);
+    #else
+      usleep(1000000);  /* sleep for 1 Second */
+      #endif
 
   }
 
