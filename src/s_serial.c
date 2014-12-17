@@ -9,9 +9,7 @@ s_serial_t  *s_serial_new()
 	s_serial_m * mode;
 	s_serial= (s_serial_t *)malloc(sizeof(s_serial_t));
 	mode= (s_serial_m *)malloc(sizeof(s_serial_m));
-	#ifdef _WIN32
-
-	#else
+	#ifdef __linux__
 	s_serial->mode=mode;
 	#endif
 	return s_serial;
