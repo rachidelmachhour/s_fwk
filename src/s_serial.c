@@ -23,13 +23,13 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
 	{
 	case 1 	:	s_serial->settings.StopBits=ONESTOPBIT;
 				break;
-	case 1.5:   s_serial->settings.StopBits=ONE5STOPBITS;
+	case 1.5:   	s_serial->settings.StopBits=ONE5STOPBITS;
 				break;
 	case 2  :	s_serial->settings.StopBits=TWOSTOPBITS;
 				break;
-	default :   printf("invalid number of stop bits '%d'\n", nb_stop_bits);
+	default 	printf("invalid number of stop bits '%d'\n", nb_stop_bits);
 	    		printf("try : \n 1 : One stop bit. \n 1.5 : 1.5 stop bits. \n 2 : Two stop bits. \n")
-	            return(0);
+	            	return(0);
 	}
 
 	if(SetCommState(s_serial->fd, &s_serial->settings)==0)
@@ -45,14 +45,14 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
 
 	switch(nb_stop_bits)
    	{
-	    case 1  :   s_serial->settings.c_cflag &= ~CSTOPB; // Not 2 stop bits = One stop bit
-	    			s_serial->mode->bstop=0;
-				    break;
-		case 2  :	s_serial->settings.c_cflag |= CSTOPB; // Two stop bits
-			    	s_serial->mode->cpar=CSTOPB;
-			        break;
-	    default :   printf("invalid number of stop bits '%d'\n", nb_stop_bits);
-	    			printf("try : \n 1 : One stop bit \n 2 : Two stop bits \n");
+	case 1  :   	s_serial->settings.c_cflag &= ~CSTOPB; // Not 2 stop bits = One stop bit
+	    		s_serial->mode->bstop=0;
+			break;
+	case 2  :	s_serial->settings.c_cflag |= CSTOPB; // Two stop bits
+			s_serial->mode->cpar=CSTOPB;
+			break;
+	default 	printf("invalid number of stop bits '%d'\n", nb_stop_bits);
+	    		printf("try : \n 1 : One stop bit \n 2 : Two stop bits \n");
 	                return(0);
 	}
 
@@ -84,7 +84,7 @@ int	s_serial_set_parity_type(s_serial_t * s_serial, char parity_type)
 	    case 'o':	s_serial->settings.Parity=SPACEPARITY; // Space parity.
 	             	break;
 	    default :	printf("invalid parity '%c'\n", parity_type);
-	    			printf("try : \n N : No parity \n E :  Parity Enable \n O : Odd Parity \n");
+	    		printf("try : \n N : No parity \n E :  Parity Enable \n O : Odd Parity \n");
 	             	return(0);
 	             	break;
   	}
@@ -98,20 +98,20 @@ int	s_serial_set_parity_type(s_serial_t * s_serial, char parity_type)
   	{
 	    case 'N':
 	    case 'n':	s_serial->settings.c_cflag &= ~PARENB;
-	    		 	s_serial->mode->cpar = IGNPAR;	    		 	
+	    		s_serial->mode->cpar = IGNPAR;	    		 	
 	             	break;
 	    case 'E':		    
 	    case 'e':	s_serial->settings.c_cflag |= PARENB; // Parity enable
-					s_serial->settings.c_cflag &= ~PARODD; // Turn off odd parity = even
-	    			s_serial->mode->cpar = PARENB;
+			s_serial->settings.c_cflag &= ~PARODD; // Turn off odd parity = even
+	    		s_serial->mode->cpar = PARENB;
 	             	break;
 	    case 'O':		    
 	    case 'o':	s_serial->settings.c_cflag = (PARENB | PARODD);
-	    			s_serial->mode->cpar = (PARENB | PARODD);
+	    		s_serial->mode->cpar = (PARENB | PARODD);
 	             	break;
 				
-		default :	printf("invalid parity '%c'\n", parity_type);
-	    			printf("try : \n N : No parity \n E :  Parity Enable \n O : Odd Parity \n");
+	    default :	printf("invalid parity '%c'\n", parity_type);
+	    		printf("try : \n N : No parity \n E :  Parity Enable \n O : Odd Parity \n");
 	             	return(0);
   	}
 
@@ -154,26 +154,30 @@ int	s_serial_set_caractere_size(s_serial_t * s_serial,int  char_size)
 
 	switch(char_size)
 	{
-	    case  8 : s_serial->settings.c_cflag &= ~CSIZE;
-	    		  s_serial->settings.c_cflag |= CS8; 
-	    		  s_serial->mode->cbits = CS8;
-                  break;
-	    case  7 : s_serial->settings.c_cflag &= ~CSIZE;
-	    		  s_serial->settings.c_cflag |= CS7;
-	    		  s_serial->mode->cbits = CS7;
-                  break;
-	    case  6 : s_serial->settings.c_cflag &= ~CSIZE;
-	    		  s_serial->settings.c_cflag |= CS6;
-	    		  s_serial->mode->cbits = CS6;
-                  break;
-	    case  5 : s_serial->settings.c_cflag &= ~CSIZE;
-	    		  s_serial->settings.c_cflag |= CS5;
-	    		  s_serial->mode->cbits = CS5;
-				  break;
-	    default : printf("invalid number of data-bits '%d'\n", char_size);
-	    		  printf("try : 8,7,6,5 bits\n");
-	              return(0);
-	              break;
+	    case  8 : 	s_serial->settings.c_cflag &= ~CSIZE;
+	    		s_serial->settings.c_cflag |= CS8; 
+	    		s_serial->mode->cbits = CS8;
+                  	break;
+                  	
+	    case  7 :	s_serial->settings.c_cflag &= ~CSIZE;
+	    		s_serial->settings.c_cflag |= CS7;
+	    		s_serial->mode->cbits = CS7;
+                  	break;
+                  	
+	    case  6 :	s_serial->settings.c_cflag &= ~CSIZE;
+	    		s_serial->settings.c_cflag |= CS6;
+	    		s_serial->mode->cbits = CS6;
+                  	break;
+                  	
+	    case  5 : 	s_serial->settings.c_cflag &= ~CSIZE;
+	    		s_serial->settings.c_cflag |= CS5;
+	    		s_serial->mode->cbits = CS5;
+			break;
+			
+	    default : 	printf("invalid number of data-bits '%d'\n", char_size);
+	    		printf("try : 8,7,6,5 bits\n");
+	              	return(0);
+	              	break;
  	}
 	if(tcsetattr(s_serial->fd, TCSANOW, &s_serial->settings)==-1)
  	{
