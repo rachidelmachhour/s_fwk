@@ -23,13 +23,13 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
 	{
 	case 1 	:	s_serial->settings.StopBits=ONESTOPBIT;
 				break;
-	case 1.5:   	s_serial->settings.StopBits=ONE5STOPBITS;
+    case 3 :   s_serial->settings.StopBits=ONE5STOPBITS;
 				break;
 	case 2  :	s_serial->settings.StopBits=TWOSTOPBITS;
 				break;
-	default 	printf("invalid number of stop bits '%d'\n", nb_stop_bits);
-	    		printf("try : \n 1 : One stop bit. \n 1.5 : 1.5 stop bits. \n 2 : Two stop bits. \n")
-	            	return(0);
+	default :	printf("invalid number of stop bits '%d'\n", nb_stop_bits);
+	    		printf("try : \n 1 : One stop bit. \n 3 : 1.5 stop bits. \n 2 : Two stop bits. \n");
+	            return(0);
 	}
 
 	if(SetCommState(s_serial->fd, &s_serial->settings)==0)
@@ -51,7 +51,7 @@ int s_serial_set_nb_stop_bits(s_serial_t * s_serial,int nb_stop_bits)
 	case 2  :	s_serial->settings.c_cflag |= CSTOPB; // Two stop bits
 			s_serial->mode->cpar=CSTOPB;
 			break;
-	default 	printf("invalid number of stop bits '%d'\n", nb_stop_bits);
+	default :	printf("invalid number of stop bits '%d'\n", nb_stop_bits);
 	    		printf("try : \n 1 : One stop bit \n 2 : Two stop bits \n");
 	                return(0);
 	}
