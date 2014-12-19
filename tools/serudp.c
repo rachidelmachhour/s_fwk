@@ -6,9 +6,7 @@
 #include "s_udp.h"
 #include "s_serial.h"
 
-/** Program to calculate the area and perimeter of 
- * a rectangle using command line arguments
- */
+
 void print_usage() {
     printf("Usage: rectangle [us]  \t -h : host \t -p port UDP \t -d port Serial (/dev/tty* || COM*) \t -b Baudrate  \t -r : parity type  \t -l : caractere size \t -n : bits stop\n");
 }
