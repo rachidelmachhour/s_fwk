@@ -107,26 +107,26 @@ int main(int argc, char *argv[]) {
     {
         switch (opt) {
              case 'u' : udp2ser = 0;
-                 break;
+                        break;
              case 's' : ser2udp = 0;
                         udp2ser = -1;
-                 break;
+                        break;
              case 'h' : host = optarg; 
-                 break;
+                        break;
              case 'p' : port = atoi(optarg);
-                 break;
+                        break;
              case 'd' : portser = optarg;
-                 break;
+                        break;
              case 'b' : baudrate = atoi(optarg);
-                 break;
+                        break;
              case 'r' : parity = optarg;
-                 break;
+                        break;
              case 'l' : char_size = atoi(optarg);
-                 break;
+                        break;
              case 'n' : bstop = atoi(optarg);
-                 break;
+                        break;
              case 'f' : flow = atoi(optarg);
-                 break;
+                        break;
             
              default: print_usage(); 
                  exit(EXIT_FAILURE);
