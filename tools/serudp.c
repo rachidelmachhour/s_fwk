@@ -19,8 +19,9 @@ int port=-1;
 
 void print_usage() 
 {
-    printf("Usage:  [us] -h : host  -p port UDP  -d port Serial (/dev/tty* || COM*)  -b Baudrate  -r : parity type   -l : caractere size  -n : bits stop   -f : flow control\n");
+    printf("Usage: -a : help  [us] -h : host  -p port UDP  -d port Serial (/dev/tty* || COM*)  -b Baudrate  -r : parity type   -l : caractere size  -n : bits stop   -f : flow control\n");
     printf(
+            "  -a           Help \n"
             "  -u           UDP to SERIAL (by default -u) \n"
             "  -s           SERIAL to UDP (by default -u)\n"
             "  -h           host\n"
@@ -89,6 +90,7 @@ int main(int argc, char *argv[]) {
     cli_info=udpcli_info_init();
 
      static struct option long_options[] = {
+        {"Help"     ,       no_argument         ,   0   ,  'a'  },
         {"udp2ser"  ,       no_argument         ,   0   ,  'u'  },
         {"ser2udp"  ,       no_argument         ,   0   ,  's'  },
         {"host"     ,       required_argument   ,   0   ,  'h'  },
@@ -103,10 +105,12 @@ int main(int argc, char *argv[]) {
     };
 
     int long_index =0;
-    while ((opt = getopt_long(argc, argv,"ush:p:d:b:r:l:n:f:",long_options, &long_index )) != -1) 
+    while ((opt = getopt_long(argc, argv,"aush:p:d:b:r:l:n:f:",long_options, &long_index )) != -1) 
     {
         switch (opt) {
-             case 'u' : udp2ser = 0;
+             case 'a' : print_usage();
+                        return 0;
+            case 'u' : udp2ser = 0;
                         break;
              case 's' : ser2udp = 0;
                         udp2ser = -1;
