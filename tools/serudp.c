@@ -6,24 +6,35 @@
 #include "s_udp.h"
 #include "s_serial.h"
 #include "s_loop.h"
+#include "s_type.h"
+#include "s_thread.h"
+
+typedef struct _params
+{
+    char *portser;
+    char *host;
+    int port;
+};
+
+struct _params *params;
 
 udpcli_t * cli;
 udpsrv_t * srv;
 s_serial_t *ser;
+s_thread_t tid;
 struct udpcli_info *cli_info;
 
 char message[256];
 
-char *portser=NULL,*host=NULL;
-int port=-1;
+
 
 void print_usage() 
 {
-    printf("Usage: -a : help  [us] -h : host  -p port UDP  -d port Serial (/dev/tty* || COM*)  -b Baudrate  -r : parity type   -l : caractere size  -n : bits stop   -f : flow control\n");
+    printf("Usage: -a : help  [sc] -h : host  -p port UDP  -d port Serial (/dev/tty* || COM*)  -b Baudrate  -r : parity type   -l : caractere size  -n : bits stop   -f : flow control\n");
     printf(
             "  -a           Help \n"
-            "  -u           UDP to SERIAL (by default -u) \n"
-            "  -s           SERIAL to UDP (by default -u)\n"
+            "  -s           Server (by default -s) \n"
+            "  -c           Client (by default -s)\n"
             "  -h           host\n"
             "  -p           port\n"
             "  -d           port serial (/dev/tty* || COM*)\n"
@@ -39,60 +50,96 @@ void print_usage()
 void serudp(int fd, void *user_data)
 {
     int n , i;
-    char buf[100];
+    int sys=(int)user_data;
+     char buf[4096];
+
+        printf("serudp\n");
+
+        memset(buf,0,4095);
 
         n = s_serial_read(ser, buf, 4095);
         if(n > 0)
-        {
-           buf[n] = 0;   /* always put a "null" at the end of a string! */
-
-            for(i=0; i < n; i++)
             {
-                if(buf[i] < 32)  /* replace unreadable control-codes by dots */
-                {
-                  buf[i] = '\0';
-                }
-            }
+              buf[n] = 0;   /* always put a "null" at the end of a string! */
 
-            printf("received %i bytes: <%s> from %s\n", n, (char *)buf,portser);
-            printf("sent <%s> to udpserver port= %d\n",(char *)buf,port );
-            udp_client_send(cli, host, port, buf,100);
-        }
+              for(i=0; i < n; i++)
+              {
+             if(buf[i] < 32)  /* replace unreadable control-codes by dots */
+              {
+                buf[i] = '\0';
+              }
+             }
+
+        printf("received %i bytes: %s\n", n, (char *)buf);
+       if(sys==0) udp_client_send(cli, cli_info->ip, cli_info->port, buf,20);
+       else udp_server_responseto(srv,buf,4095, cli_info);
+
+    }
     
 }
 
 void udpser(int fd, void *user_data)
 {
+    printf("udpser\n");
+    int sys=(int)user_data;
+    if(sys) udp_server_recv(srv, message,256,cli_info);
+    else udp_cli_recv(cli, message,256);
+    printf("received <%s> from udpclient port=%d\n", message,cli_info->port);
+    printf("write <%s> to device %s\n",message,params->portser);
 
-    udp_server_recv(srv, message,256,cli_info);
-
-    printf("received <%s> from udpclient port=%d\n", message,port);
-    printf("write <%s> to device %s\n",message,portser);
     s_serial_write(ser, message);
     memset(message,0,256);
 
 }
 
 
+void *readblock(void *user_data)
+{   
+    char buf[4095];
+    int n=0,i;
+    int sys=(int)user_data;
+    while(1)
+         {
+           n = s_serial_read(ser, buf, 4095);
+            if(n > 0)
+            {
+              buf[n] = 0;   /* always put a "null" at the end of a string! */
+
+              for(i=0; i < n; i++)
+              {
+             if(buf[i] < 32)  /* replace unreadable control-codes by dots */
+              {
+                buf[i] = '\0';
+              }
+             }
+
+        printf("received %i bytes: %s\n", n, (char *)buf);
+      if(sys==0)  udp_client_send(cli, cli_info->ip, cli_info->port, buf,20);
+      else udp_server_responseto(srv,buf,4095, cli_info);
+
+    }
+ 
+
+  }
+}
 int main(int argc, char *argv[]) {
-    
+   
     sloop_t * sloop_d;
-    
-    char buf[100];
-    int res=0;
-    int fd,n,i;
     int opt= 0;
-    int udp2ser = 0, ser2udp = -1,baudrate=115200,char_size=8,bstop=1,flow=-1;
-  
+    int server = 0, client = -1,baudrate=9600,char_size=8,bstop=1,flow=-1;
     char *parity="N";
-    char  str[2][100];
+    params = (struct _params *)malloc(sizeof(struct _params));
+    params->portser=NULL;
+    params->host=NULL;
+    params->port=0;
+   
 
     cli_info=udpcli_info_init();
-
+    cli=new_udp_client();
      static struct option long_options[] = {
         {"Help"     ,       no_argument         ,   0   ,  'a'  },
-        {"udp2ser"  ,       no_argument         ,   0   ,  'u'  },
-        {"ser2udp"  ,       no_argument         ,   0   ,  's'  },
+        {"server"   ,       no_argument         ,   0   ,  's'  },
+        {"client"   ,       no_argument         ,   0   ,  'c'  },
         {"host"     ,       required_argument   ,   0   ,  'h'  },
         {"port"     ,       required_argument   ,   0   ,  'p'  },
         {"portser"  ,       required_argument   ,   0   ,  'd'  },
@@ -103,23 +150,22 @@ int main(int argc, char *argv[]) {
         {"flow"     ,       required_argument   ,   0   ,  'f'  },
         {0          ,       0                   ,   0   ,   0   }
     };
-
     int long_index =0;
-    while ((opt = getopt_long(argc, argv,"aush:p:d:b:r:l:n:f:",long_options, &long_index )) != -1) 
+    while ((opt = getopt_long(argc, argv,"asch:p:d:b:r:l:n:f:",long_options, &long_index )) != -1) 
     {
         switch (opt) {
              case 'a' : print_usage();
                         return 0;
-            case 'u' : udp2ser = 0;
+             case 's' : server = 0;
                         break;
-             case 's' : ser2udp = 0;
-                        udp2ser = -1;
+             case 'c' : client = 0;
+                        server = -1;
                         break;
-             case 'h' : host = optarg; 
+             case 'h' : cli_info->ip = optarg; 
                         break;
-             case 'p' : port = atoi(optarg);
+             case 'p' : cli_info->port = atoi(optarg);
                         break;
-             case 'd' : portser = optarg;
+             case 'd' : params->portser = optarg;
                         break;
              case 'b' : baudrate = atoi(optarg);
                         break;
@@ -136,67 +182,66 @@ int main(int argc, char *argv[]) {
                  exit(EXIT_FAILURE);
         }
     }
-    if ((udp2ser == -1 && ser2udp ==-1 )|| port ==-1  || portser==NULL || host==NULL ) 
+
+    if ((server == -1 && client ==-1 )|| params->portser ==-1  || cli_info->port==NULL || cli_info->ip==NULL ) 
     {
         print_usage();
         exit(EXIT_FAILURE);
     }
-
-    if (udp2ser == 0) 
-    {   
-        printf("\n\nUDP(port=%d,host=%s) to serial(port=%s,baudrate=%d)   \n",port,host,portser,baudrate);
-
-        srv=new_udp_server(port);
+        printf("\n\nInfo configuration");
+        printf("\nUDP(port=%d,host=%s) \nserial(port=%s,baudrate=%d)   \n\n\n",cli_info->port,cli_info->ip,params->portser,baudrate);
+        srv=new_udp_server(cli_info->port);
+        
         ser=s_serial_new();
         sloop_d = sloop_new();
-
-        if(s_serial_open(ser,portser)==0) return 0;
+       
+        if(s_serial_open(ser,params->portser)==0) return 0;
         
         s_serial_set_baudrate(ser,baudrate);
         s_serial_set_caractere_size(ser,char_size);
         s_serial_set_parity_type(ser,parity[0]);
         s_serial_set_nb_stop_bits(ser,bstop);
-       
+        sloop_set_timeout(sloop_d,1000);
         if(flow!=-1)
         if(flow) s_serial_enable_software_flow_control(ser);
         else s_serial_enable_software_flow_control(ser);
-
+       
+        #ifdef _WIN32
         
-        sloop_set_timeout(sloop_d,1000);
 
-        sloop_add_fd(sloop_d,SLOOP_RD,udp_srv_get_socket_fd(srv),udpser,NULL);
+            if(client==0) 
+                {
+                    s_thread_create(&tid,readblock, (void*)0);
+                    sloop_add_fd(sloop_d,SLOOP_RD,udp_cli_get_socket_fd(cli),udpser,(void*)0);
+                }
+            else 
+                {
+                    s_thread_create(&tid,readblock, (void*)1);
+                    sloop_add_fd(sloop_d,SLOOP_RD,udp_srv_get_socket_fd(srv),udpser,(void*)1);
+                }
 
+        #else
+
+            if(client==0)
+            {
+                sloop_add_fd(sloop_d,SLOOP_RD,s_serial_get_fd(ser),serudp,(void*)0);
+                sloop_add_fd(sloop_d,SLOOP_RD,udp_cli_get_socket_fd(cli),udpser,(void*)0);
+            }
+            else
+            {
+                sloop_add_fd(sloop_d,SLOOP_RD,s_serial_get_fd(ser),serudp,(void*)1);
+                sloop_add_fd(sloop_d,SLOOP_RD,udp_srv_get_socket_fd(srv),udpser,(void*)1);
+            }
+        #endif
+       
         sloop_run(sloop_d);
 
-    }
-
-    if (ser2udp == 0) 
-    {
-    
-        printf("\n\nserial(port=%s,baudrate=%d) to UDP(port=%d,host=%s) \n",portser,baudrate,port,host);
-       
-        ser=s_serial_new();
-        cli=new_udp_client();
-        sloop_d = sloop_new();
-
-        if(s_serial_open(ser,portser)==0) return 0;
-     
-        s_serial_set_baudrate(ser,baudrate);
-        s_serial_set_caractere_size(ser,char_size);
-        s_serial_set_parity_type(ser,parity[0]);
-        s_serial_set_nb_stop_bits(ser,bstop);
-       
-        printf("%d\n",s_serial_get_fd(ser) );
+        #ifdef _WIN32
+        s_thread_join(&tid) ;
+        printf("join\n");
+        #endif
         
-        sloop_set_timeout(sloop_d,1000);
 
-
-        sloop_add_fd(sloop_d,SLOOP_RD,s_serial_get_fd(ser),serudp,NULL);
-        
-        sloop_run(sloop_d);
-
-       
-
-    }
+   
     return 0;
 }
