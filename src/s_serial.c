@@ -10,9 +10,7 @@ s_serial_t  *s_serial_new()
 	s_serial_m * mode;
 	s_serial= (s_serial_t *)malloc(sizeof(s_serial_t));
 	mode= (s_serial_m *)malloc(sizeof(s_serial_m));
-	#ifdef _WIN32
-
-	#else
+	#ifdef __linux__
 	s_serial->mode=mode;
 	#endif
 	return s_serial;
@@ -335,20 +333,20 @@ int	s_serial_set_settings_default(s_serial_t* s_serial)
  	  return(0);
  	}
 
-	if(ioctl(s_serial->fd, TIOCMGET, &s_serial->status) == -1)
- 	{
- 	  perror("unable to get portstatus");
- 	  return(0);
- 	}
+	// if(ioctl(s_serial->fd, TIOCMGET, &s_serial->status) == -1)
+ // 	{
+ // 	  perror("unable to get portstatus");
+ // 	  return(0);
+ // 	}
 
-	s_serial->status |= TIOCM_DTR;    /* turn on DTR */
- 	s_serial->status |= TIOCM_RTS;    /* turn on RTS */
+	// s_serial->status |= TIOCM_DTR;    /* turn on DTR */
+ // 	s_serial->status |= TIOCM_RTS;    /* turn on RTS */
 	 
-	if(ioctl(s_serial->fd, TIOCMSET, &s_serial->status) == -1)
- 	{
- 	  perror("unable to set portstatus");
- 	  return(0);
-  	}
+	// if(ioctl(s_serial->fd, TIOCMSET, &s_serial->status) == -1)
+ // 	{
+ // 	  perror("unable to set portstatus");
+ // 	  return(0);
+ //  	}
 	#endif
 	
   return 1;
@@ -453,7 +451,7 @@ int s_serial_open(s_serial_t * s_serial,  char *comport)
 	else 
 	{
 		printf("Invalid port ");
-		return 0;
+		return -1;
 	}
 	
 	#ifdef _WIN32
@@ -463,7 +461,7 @@ int s_serial_open(s_serial_t * s_serial,  char *comport)
     if(s_serial->fd==INVALID_HANDLE_VALUE)
   	{
   		perror("unable to open port ");
-    	return(0);
+    	return -1;
   	}
 
 	#else
@@ -473,13 +471,13 @@ int s_serial_open(s_serial_t * s_serial,  char *comport)
     if(s_serial->fd ==-1)
   	{
   		perror("unable to open port ");
-    	return(0);
+    	return -1;
   	}
 	#endif
  
  	s_serial_set_settings_default(s_serial);
 
-  return 1;
+  return 0;
 }
 
 void s_serial_close(s_serial_t * s_serial)
@@ -512,8 +510,14 @@ int s_serial_write_byte(s_serial_t * s_serial,  char byte)
 
 
 
+int s_serial_write(s_serial_t * s_serial, unsigned char * buffer, int len){
 
-int s_serial_write(s_serial_t *s_serial, char *text)  
+	return write(s_serial->fd,buffer,len);
+
+}
+
+
+int s_serial_write_test(s_serial_t *s_serial, char *text)  
 {
 	int nb=0,i=0;
 	

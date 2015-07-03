@@ -13,9 +13,14 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <errno.h>
 
 
 #include "s_loop.h"
+#include "s_time.h"
+
+int sloop_add_timer(sloop_t *sloop_d, int msec, sloop_callback_timer handler, void *user_data,unsigned char  periodic);
+
 
 void sloop_destroy_table(struct sloop_table *table);
 
@@ -39,28 +44,31 @@ sloop_t * sloop_new()
 		sloop_d->finished=0;
 	}
 
+    sloop_d->timeout.tv_sec = 0;
+    sloop_d->timeout.tv_usec = 500;
 	return sloop_d;
 }
 
 int sloop_timer_new(sloop_t *sloop_d,int msec, sloop_callback_timer handler, void *user_data )
 {
 	int id=0;
-   id=sloop_add_timer(sloop_d,msec,handler,user_data);
-   sloop_d->periodic_timer=1;
+   id=sloop_add_timer(sloop_d,msec,handler,user_data,1);
+
    return id;
 }
 
 int sloop_timer_once_new(sloop_t *sloop_d,int msec, sloop_callback_timer handler, void *user_data )
 {
 	int id=0;
-   id=sloop_add_timer(sloop_d,msec,handler,user_data);
-   sloop_d->periodic_timer=0;
+   id=sloop_add_timer(sloop_d,msec,handler,user_data,0);
    return id;
 }
 
 int sloop_set_timeout(sloop_t *sloop_d, long msec)
 {
-    sloop_d->timeout.tv_usec=msec*1000;
+	sloop_d->timeout.tv_sec = msec/1000;
+    sloop_d->timeout.tv_usec=(msec%1000)*1000;
+	/*printf("sloop_set_timeout  tv_sec=%d  tv_usec=%d  (%d)\n",sloop_d->timeout.tv_sec,sloop_d->timeout.tv_usec,msec);*/
 	return 0;
 }
 
@@ -110,7 +118,7 @@ int sloop_add_fd(sloop_t *sloop_d, sloop_mode mode,int fd,sloop_callback_handler
 	return 0;
 }
 
-int sloop_add_timer(sloop_t *sloop_d, int msec, sloop_callback_timer handler, void *user_data)
+int sloop_add_timer(sloop_t *sloop_d, int msec, sloop_callback_timer handler, void *user_data,unsigned char  periodic)
 {
 	struct sloop_timer *tmp;
 
@@ -120,11 +128,14 @@ int sloop_add_timer(sloop_t *sloop_d, int msec, sloop_callback_timer handler, vo
 	tmp = realloc_array(sloop_d->timer_d.timer, sloop_d->timer_d.num_timer+1 , sizeof(struct sloop_timer));
 
     tmp[sloop_d->timer_d.num_timer].time_w=msec;
+    tmp[sloop_d->timer_d.num_timer].time_s=s_time_get_ms();
     tmp[sloop_d->timer_d.num_timer].handler=handler;
     tmp[sloop_d->timer_d.num_timer].user_data=user_data;
     tmp[sloop_d->timer_d.num_timer].id=sloop_d->timer_d.num_timer;
+	tmp[sloop_d->timer_d.num_timer].periodic_timer=periodic;
     sloop_d->timer_d.timer=tmp;
 	sloop_d->timer_d.num_timer++;
+
 	return sloop_d->timer_d.num_timer-1;
 }
 
@@ -177,12 +188,17 @@ int sloop_remove_timer(sloop_t *sloop_d, int id)
 	for(i=0;i<sloop_d->timer_d.num_timer;i++)
 	{
 		if(id == sloop_d->timer_d.timer[i].id){
-			if (id != sloop_d->timer_d.num_timer - 1) {
-				memmove(&sloop_d->timer_d.timer[id], &sloop_d->timer_d.timer[id+1],(sloop_d->timer_d.num_timer - id - 1) * sizeof(struct sloop_timer));
-			}
+				break;
 		}
-	}	
-	sloop_d->timer_d.num_timer--;
+	}
+	if(i == sloop_d->timer_d.num_timer)
+		return -1;
+	
+	if (id != sloop_d->timer_d.num_timer - 1){ 
+		memmove(&sloop_d->timer_d.timer[id], &sloop_d->timer_d.timer[id+1],(sloop_d->timer_d.num_timer - id - 1) * sizeof(struct sloop_timer));
+		sloop_d->timer_d.num_timer--;
+	}
+
 	return 0;
 }
 
@@ -244,6 +260,53 @@ void sloop_table_call_handler(struct sloop_table *table, fd_set *fds)
 	}
 }
 
+void s_loop_timer_table_check(sloop_t *sloop_d)	
+{
+	int i;
+	unsigned long time = s_time_get_ms();
+	int diff;
+	if(sloop_d->timer_d.num_timer!=0 ){
+
+    		for(i=0;i<sloop_d->timer_d.num_timer;i++)
+			{
+				if(sloop_d->timer_d.timer[i].time_w > 0){
+					diff = time - sloop_d->timer_d.timer[i].time_s;
+					if(diff > sloop_d->timer_d.timer[i].time_w  )
+					{
+						sloop_d->timer_d.timer[i].handler(sloop_d->timer_d.timer[i].user_data);
+						sloop_d->timer_d.timer[i].time_s = time;
+					    /*printf("run timer %d , time %ld s_time %ld (%d) periode %d\n",
+                                 i,time,sloop_d->timer_d.timer[i].time_s,diff,sloop_d->timer_d.timer[i].time_w);*/
+						if (sloop_d->timer_d.timer[i].periodic_timer == 0)
+							sloop_d->timer_d.timer[i].time_w = 0;
+					}
+				}
+			}
+		}
+}
+
+void s_loop_timer_table_check_and_clean(sloop_t *sloop_d)
+{
+    int i;
+    unsigned long time = s_time_get_ms();
+    int diff;
+    if(sloop_d->timer_d.num_timer!=0 ){
+		for(i=0;i<sloop_d->timer_d.num_timer;i++)
+        {
+			/*printf("s_loop_timer_table_check_and_clean (%d) %d : %d /%d\n",sloop_d->timer_d.num_timer,i,
+					sloop_d->timer_d.timer[i].id,sloop_d->timer_d.timer[i].time_w);*/
+ 	    	if(sloop_d->timer_d.timer[i].time_w == 0){
+				break;
+			}
+		}
+		if((i!= sloop_d->timer_d.num_timer) && (sloop_d->timer_d.timer[i].time_w == 0)){	
+			sloop_remove_timer(sloop_d,sloop_d->timer_d.timer[i].id);
+		}
+	}
+}
+
+
+
 void sloop_run_step(sloop_t *sloop_d)
 {
 	fd_set *readfds, *writefds, *exceptfds;
@@ -260,8 +323,7 @@ void sloop_run_step(sloop_t *sloop_d)
 		free(exceptfds);
 		return;
 	}
-	timeout.tv_sec=0;
-	timeout.tv_usec=100000;
+	timeout.tv_sec=sloop_d->timeout.tv_sec;
 	timeout.tv_usec=sloop_d->timeout.tv_usec;
     
     sloop_table_set_fd(&sloop_d->readfds, readfds);
@@ -276,12 +338,10 @@ void sloop_run_step(sloop_t *sloop_d)
 		sloop_table_call_handler(&sloop_d->writefds, writefds);
 		sloop_table_call_handler(&sloop_d->exceptfds, exceptfds);
 	}
-		/* check timer */
-
-	else
-	{
-		printf("timeout finished !! no event !!");
-	}
+	/* check timer */
+	s_loop_timer_table_check_and_clean(sloop_d);
+	s_loop_timer_table_check(sloop_d);	
+ 
 
 	free(readfds);
 	free(writefds);
@@ -293,10 +353,9 @@ void sloop_run_step(sloop_t *sloop_d)
 
 void sloop_run(sloop_t *sloop_d)
 {
-	double actual_time[sloop_d->timer_d.num_timer],first_time[sloop_d->timer_d.num_timer];
 	fd_set *readfds, *writefds, *exceptfds;
 	struct timeval timeout;
-	int res,i,periodic=1;
+	int res,i;
 
 	readfds = malloc(sizeof(*readfds));
 	writefds = malloc(sizeof(*writefds));
@@ -308,54 +367,32 @@ void sloop_run(sloop_t *sloop_d)
 		free(exceptfds);
 		return;
 	}
-	timeout.tv_sec=0;
-	timeout.tv_usec=500000;
-
-	if(sloop_d->timer_d.num_timer!=0)
-	{
-    	for(i=0;i<sloop_d->timer_d.num_timer;i++)
-			{
-    			first_time[i]=(double)time(NULL);
-			}
-	}
     
 	while(!sloop_d->finished)
 	{
 
-	sloop_table_set_fd(&sloop_d->readfds, readfds);
-	sloop_table_set_fd(&sloop_d->writefds, writefds);
-	sloop_table_set_fd(&sloop_d->exceptfds, exceptfds);
+		sloop_table_set_fd(&sloop_d->readfds, readfds);
+		sloop_table_set_fd(&sloop_d->writefds, writefds);
+		sloop_table_set_fd(&sloop_d->exceptfds, exceptfds);
 
-	res = select(sloop_d->max_fd + 1, readfds, writefds, exceptfds, &timeout);
+    	timeout.tv_sec=sloop_d->timeout.tv_sec;
+    	timeout.tv_usec=sloop_d->timeout.tv_usec;
 
-	if(res != 0)
-	{
-		sloop_table_call_handler(&sloop_d->readfds, readfds);
-		sloop_table_call_handler(&sloop_d->writefds, writefds);
-		sloop_table_call_handler(&sloop_d->exceptfds, exceptfds);
-	}	/* check timer */
-    
-    if(sloop_d->timer_d.num_timer!=0 && periodic){
+		res = select(sloop_d->max_fd + 1, readfds, writefds, exceptfds, &timeout);
 
-    	for(i=0;i<sloop_d->timer_d.num_timer;i++)
+		if(res != 0)
 		{
-				actual_time[i]=(double)time(NULL);
-			if(sloop_d->timer_d.timer[i].time_w<(double)((actual_time[i]-first_time[i])*1000))
-			{
-				sloop_d->timer_d.timer[i].handler(sloop_d->timer_d.timer[i].user_data);
-				first_time[i]=(double)time(NULL);
-				if(sloop_d->periodic_timer == 0)
-				{
-					periodic=0;
-				}
-			}
-		}
-	}
+			sloop_table_call_handler(&sloop_d->readfds, readfds);
+			sloop_table_call_handler(&sloop_d->writefds, writefds);
+			sloop_table_call_handler(&sloop_d->exceptfds, exceptfds);
+		}	
+	
+		/* check timer */
+  	 
+		s_loop_timer_table_check_and_clean(sloop_d);
+		s_loop_timer_table_check(sloop_d);	
+    	
 
-	/*else
-	{
-		printf("timeout finished !! no event !!");
-	}*/
 	}	
 	free(readfds);
 	free(writefds);

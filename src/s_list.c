@@ -42,6 +42,7 @@ int s_list_insert_first(struct s_list *list_d, void *item)
 
 int s_list_clean(struct s_list *list_d)
 {
+#warning " need a real clean "
 	list_d->next=NULL;
 	list_d->length=0;
 	return 0;
@@ -49,6 +50,7 @@ int s_list_clean(struct s_list *list_d)
 
 int s_list_destroy(struct s_list *list_d)
 {
+#warning " need a real distory "
 	if(list_d == NULL)
 		return -1;
 	

@@ -89,11 +89,13 @@ struct sloop_table
  */
 struct sloop_timer
 {
-   int time_w;
-   void *user_data;
-   sloop_callback_timer handler;
-   int stop;
-   int id;
+   	int time_w;
+	unsigned long time_s;
+   	void *user_data;
+   	sloop_callback_timer handler;
+   	int stop;
+   	int id;
+	unsigned char periodic_timer;
 };
 
 /**
@@ -169,18 +171,6 @@ int sloop_timer_new(sloop_t *sloop_d,int msec, sloop_callback_timer handler, voi
  * \return 0 if sucess or -1 if fail.
  */
 int sloop_add_fd(sloop_t *sloop_d, sloop_mode mode,int fd,sloop_callback_handler handler,void *user_data);
-
-/**
- * \fn int sloop_add_timer(sloop_t *sloop_d, int msec, sloop_callback_timer handler, void *user_data);
- * \brief function used to add timer to the sloop_data.
- *
- * \param sloop_d sloop_data.
- * \param msec time in milisecondes
- * \param handler the callback function
- * \param user_data the user data
- * \return 0 if sucess or -1 if fail.
- */
-int sloop_add_timer(sloop_t *sloop_d, int msec, sloop_callback_timer handler, void *user_data);
 
 /**
  * \fn int sloop_remove_fd(sloop_t *sloop_d,sloop_mode mode,int fd);
